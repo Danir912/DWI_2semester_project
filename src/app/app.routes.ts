@@ -20,6 +20,18 @@ export const APP_ROUTES: Routes = [
       import('./features/contacts/trash-page.component').then((m) => m.TrashPageComponent),
   },
   {
+    path: 'contacts/reminders',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/contacts/reminders-page.component').then((m) => m.RemindersPageComponent),
+  },
+  {
+    path: 'contacts/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/contacts/contact-edit-page.component').then((m) => m.ContactEditPageComponent),
+  },
+  {
     path: 'contacts/:id',
     canActivate: [authGuard],
     loadComponent: () =>

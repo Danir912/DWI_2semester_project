@@ -9,6 +9,7 @@ import {
   Contact,
   ContactFilters,
   ContactPayload,
+  ContactReminderItem,
   Interaction,
   Note,
   Reminder,
@@ -82,10 +83,36 @@ export const ContactsStore = signalStore(
     filteredContacts: computed(() => filterContacts(store.contacts(), store.filters())),
     categories: computed(() => Array.from(new Set(store.contacts().map((contact) => contact.category))).sort()),
     selectedContact: computed(() => store.contacts().find((contact) => contact.id === store.selectedId()) ?? null),
+    reminders: computed(() =>
+      store
+        .contacts()
+        .flatMap((contact) => contact.reminders.map((reminder) => ({contact, reminder})))
+        .sort(
+          (left, right) =>
+            new Date(left.reminder.dueDate).getTime() - new Date(right.reminder.dueDate).getTime(),
+        ),
+    ),
+    pendingRemindersCount: computed(() =>
+      store.contacts().reduce(
+        (sum, contact) => sum + contact.reminders.filter((reminder) => !reminder.completed).length,
+        0,
+      ),
+    ),
     trashCount: computed(() => store.trash().length),
     stats: computed(() => calculateStats(store.contacts())),
   })),
-  withMethods((store, api = inject(CrmApiService)) => ({
+  withMethods((store, api = inject(CrmApiService)) => {
+    const persistContact = (contact: Contact): void => {
+      patchState(store, ({contacts}) => ({
+        contacts: contacts.map((item) => (item.id === contact.id ? contact : item)),
+      }));
+
+      api.updateContact(contact).subscribe({
+        error: () => patchState(store, {error: 'Изменения контакта не сохранены'}),
+      });
+    };
+
+    return {
     load: rxMethod<void>(
       pipe(
         tap(() => patchState(store, {loading: true, error: null})),
@@ -225,30 +252,56 @@ export const ContactsStore = signalStore(
       });
     },
     addInteraction(contactId: string, interaction: Interaction): void {
-      patchState(store, ({contacts}) => ({
-        contacts: contacts.map((contact) =>
-          contact.id === contactId
-            ? {...contact, interactions: [interaction, ...contact.interactions], lastContactAt: interaction.date}
-            : contact,
-        ),
-      }));
+      const contact = store.contacts().find((item) => item.id === contactId);
+
+      if (!contact) {
+        return;
+      }
+
+      persistContact({
+        ...contact,
+        interactions: [interaction, ...contact.interactions],
+        lastContactAt: interaction.date,
+      });
     },
     addNote(contactId: string, note: Note): void {
-      patchState(store, ({contacts}) => ({
-        contacts: contacts.map((contact) =>
-          contact.id === contactId ? {...contact, notes: [note, ...contact.notes]} : contact,
-        ),
-      }));
+      const contact = store.contacts().find((item) => item.id === contactId);
+
+      if (!contact) {
+        return;
+      }
+
+      persistContact({...contact, notes: [note, ...contact.notes]});
     },
     addReminder(contactId: string, reminder: Reminder): void {
-      patchState(store, ({contacts}) => ({
-        contacts: contacts.map((contact) =>
-          contact.id === contactId ? {...contact, reminders: [reminder, ...contact.reminders]} : contact,
+      const contact = store.contacts().find((item) => item.id === contactId);
+
+      if (!contact) {
+        return;
+      }
+
+      persistContact({...contact, reminders: [reminder, ...contact.reminders]});
+    },
+    toggleReminder(contactId: string, reminderId: string, completed: boolean): void {
+      const contact = store.contacts().find((item) => item.id === contactId);
+
+      if (!contact) {
+        return;
+      }
+
+      persistContact({
+        ...contact,
+        reminders: contact.reminders.map((reminder) =>
+          reminder.id === reminderId ? {...reminder, completed} : reminder,
         ),
-      }));
+      });
+    },
+    reminderStatusLabel(item: ContactReminderItem): string {
+      return item.reminder.completed ? 'Выполнено' : 'Ожидает';
     },
     importContacts(contacts: Contact[]): void {
       patchState(store, {contacts, selectedId: contacts[0]?.id ?? null});
     },
-  })),
+    };
+  }),
 );

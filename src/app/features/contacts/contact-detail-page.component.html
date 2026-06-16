@@ -12,59 +12,10 @@
           <p>{{ contact.company }} · {{ contact.email }} · {{ contact.phone }}</p>
         </div>
         <div class="detail__actions">
-          <button tuiButton type="button" appearance="secondary" (click)="startEdit(contact)">Изменить</button>
+          <a tuiButton appearance="secondary" [routerLink]="['/contacts', contact.id, 'edit']">Изменить</a>
           <button tuiButton type="button" appearance="destructive" (click)="archive(contact)">Удалить</button>
         </div>
       </div>
-
-      @if (isEditing) {
-        <form [formGroup]="contactForm" (ngSubmit)="saveContact(contact)" class="contact-form">
-          <label>
-            Имя
-            <tui-textfield>
-              <input tuiTextfield formControlName="name" autocomplete="name">
-            </tui-textfield>
-          </label>
-          <label>
-            Компания
-            <tui-textfield>
-              <input tuiTextfield formControlName="company">
-            </tui-textfield>
-          </label>
-          <label>
-            Email
-            <tui-textfield>
-              <input tuiTextfield formControlName="email" type="email">
-            </tui-textfield>
-          </label>
-          <label>
-            Телефон
-            <tui-textfield>
-              <input tuiTextfield formControlName="phone" type="tel">
-            </tui-textfield>
-          </label>
-          <label>
-            Категория
-            <input class="native-input" formControlName="category">
-          </label>
-          <label>
-            Статус
-            <select formControlName="status">
-              <option value="new">Новый</option>
-              <option value="active">Активный</option>
-              <option value="inactive">Неактивный</option>
-            </select>
-          </label>
-          <label>
-            Следующий контакт
-            <input class="native-input" formControlName="nextContactAt" type="date">
-          </label>
-          <div class="form-actions">
-            <button tuiButton type="submit">Сохранить</button>
-            <button tuiButton type="button" appearance="flat" (click)="cancelEdit(contact)">Отмена</button>
-          </div>
-        </form>
-      }
 
       <form [formGroup]="activityForm" class="activity" (ngSubmit)="addActivity(contact)">
         <label>
@@ -94,6 +45,26 @@
         <button tuiButton type="submit" appearance="accent">Записать</button>
       </form>
 
+      <section class="reminders" aria-labelledby="contact-reminders-title">
+        <h2 id="contact-reminders-title">Напоминания</h2>
+        @for (reminder of contact.reminders; track reminder.id) {
+          <article class="reminder" [class.reminder_done]="reminder.completed">
+            <div>
+              <span tuiBadge size="s" [appearance]="reminder.completed ? 'positive' : 'warning'">
+                {{ reminder.completed ? 'Выполнено' : 'Ожидает' }}
+              </span>
+              <strong>{{ reminder.dueDate }}</strong>
+              <p>{{ reminder.text }}</p>
+            </div>
+            <button tuiButton type="button" appearance="secondary" (click)="toggleReminder(contact, reminder)">
+              {{ reminder.completed ? 'Вернуть в работу' : 'Выполнено' }}
+            </button>
+          </article>
+        } @empty {
+          <p class="muted">Напоминаний пока нет</p>
+        }
+      </section>
+
       <div class="timeline">
         <h2>История</h2>
         @for (interaction of contact.interactions; track interaction.id) {
@@ -112,9 +83,9 @@
         }
         @for (reminder of contact.reminders; track reminder.id) {
           <article>
-            <span tuiBadge size="s" appearance="warning">reminder</span>
+            <span tuiBadge size="s" [appearance]="reminder.completed ? 'positive' : 'warning'">reminder</span>
             <strong>{{ reminder.dueDate }}</strong>
-            <p>{{ reminder.text }}</p>
+            <p>{{ reminder.text }} · {{ reminder.completed ? 'выполнено' : 'ожидает' }}</p>
           </article>
         }
       </div>

@@ -1,17 +1,17 @@
-import {ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit, computed, inject, input} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {TuiButton, TuiTextfield} from '@taiga-ui/core';
+import {TuiButton} from '@taiga-ui/core';
 import {TuiBadge} from '@taiga-ui/kit';
 
-import {Contact, ContactPayload, ContactStatus, InteractionType} from '../../shared/models/contact.model';
+import {Contact, ContactStatus, InteractionType, Reminder} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
 import {createId} from './contacts.utils';
 
 @Component({
   selector: 'app-contact-detail-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TuiBadge, TuiButton, TuiTextfield],
+  imports: [ReactiveFormsModule, RouterLink, TuiBadge, TuiButton],
   templateUrl: './contact-detail-page.component.html',
   styleUrl: './contact-detail-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,17 +29,6 @@ export class ContactDetailPageComponent implements OnInit {
     inactive: 'Неактивный',
   };
   protected readonly contact = computed(() => this.store.contactById(this.id()));
-  protected isEditing = false;
-
-  protected readonly contactForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    company: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    phone: ['', Validators.required],
-    category: ['Клиенты', Validators.required],
-    status: ['new' as ContactStatus, Validators.required],
-    nextContactAt: [this.today, Validators.required],
-  });
 
   protected readonly activityForm = this.fb.nonNullable.group({
     type: ['call' as InteractionType, Validators.required],
@@ -49,46 +38,8 @@ export class ContactDetailPageComponent implements OnInit {
     reminderDate: [this.today],
   });
 
-  constructor() {
-    effect(() => {
-      const contact = this.contact();
-
-      if (contact && !this.isEditing) {
-        this.patchContactForm(contact);
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.store.load();
-  }
-
-  protected startEdit(contact: Contact): void {
-    this.isEditing = true;
-    this.patchContactForm(contact);
-  }
-
-  protected cancelEdit(contact: Contact): void {
-    this.patchContactForm(contact);
-    this.isEditing = false;
-  }
-
-  protected saveContact(contact: Contact): void {
-    if (this.contactForm.invalid) {
-      this.contactForm.markAllAsTouched();
-      return;
-    }
-
-    const payload: ContactPayload = {
-      ...this.contactForm.getRawValue(),
-      lastContactAt: contact.lastContactAt,
-      notes: contact.notes,
-      interactions: contact.interactions,
-      reminders: contact.reminders,
-    };
-
-    this.store.updateContact({...contact, ...payload});
-    this.isEditing = false;
   }
 
   protected archive(contact: Contact): void {
@@ -140,15 +91,7 @@ export class ContactDetailPageComponent implements OnInit {
     });
   }
 
-  private patchContactForm(contact: Contact): void {
-    this.contactForm.reset({
-      name: contact.name,
-      company: contact.company,
-      email: contact.email,
-      phone: contact.phone,
-      category: contact.category,
-      status: contact.status,
-      nextContactAt: contact.nextContactAt,
-    });
+  protected toggleReminder(contact: Contact, reminder: Reminder): void {
+    this.store.toggleReminder(contact.id, reminder.id, !reminder.completed);
   }
 }

@@ -1,0 +1,64 @@
+<section class="edit-page">
+  @if (contact(); as contact) {
+    <a [routerLink]="['/contacts', contact.id]" class="back-link">← Карточка контакта</a>
+
+    <section class="panel" aria-labelledby="edit-title">
+      <h1 id="edit-title">Изменить контакт</h1>
+      <p>{{ contact.name }} · {{ contact.company }}</p>
+
+      <form [formGroup]="contactForm" (ngSubmit)="saveContact(contact)" class="contact-form">
+        <label>
+          Имя
+          <tui-textfield>
+            <input tuiTextfield formControlName="name" autocomplete="name">
+          </tui-textfield>
+        </label>
+        <label>
+          Компания
+          <tui-textfield>
+            <input tuiTextfield formControlName="company">
+          </tui-textfield>
+        </label>
+        <label>
+          Email
+          <tui-textfield>
+            <input tuiTextfield formControlName="email" type="email">
+          </tui-textfield>
+        </label>
+        <label>
+          Телефон
+          <tui-textfield>
+            <input tuiTextfield formControlName="phone" type="tel">
+          </tui-textfield>
+        </label>
+        <label>
+          Категория
+          <input class="native-input" formControlName="category">
+        </label>
+        <label>
+          Статус
+          <select formControlName="status">
+            <option value="new">Новый</option>
+            <option value="active">Активный</option>
+            <option value="inactive">Неактивный</option>
+          </select>
+        </label>
+        <label>
+          Следующий контакт
+          <input class="native-input" formControlName="nextContactAt" type="date">
+        </label>
+        <div class="form-actions">
+          <button tuiButton type="submit">Сохранить</button>
+          <button tuiButton type="button" appearance="flat" (click)="resetChanges(contact)">
+            Вернуть исходные
+          </button>
+        </div>
+      </form>
+    </section>
+  } @else if (!store.loading()) {
+    <section class="panel">
+      <h1>Контакт не найден</h1>
+      <a tuiButton routerLink="/contacts">Вернуться к списку</a>
+    </section>
+  }
+</section>

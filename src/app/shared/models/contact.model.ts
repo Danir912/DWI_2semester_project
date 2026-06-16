@@ -42,6 +42,11 @@ export interface ArchivedContact {
   expiresAt: string;
 }
 
+export interface ContactReminderItem {
+  contact: Contact;
+  reminder: Reminder;
+}
+
 export type ContactPayload = Omit<Contact, 'id'>;
 
 export interface ContactFilters {

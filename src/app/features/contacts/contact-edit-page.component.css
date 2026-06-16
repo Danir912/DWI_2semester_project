@@ -1,0 +1,71 @@
+.edit-page {
+  display: grid;
+  gap: 18px;
+}
+
+.back-link {
+  color: var(--crm-accent);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.panel {
+  border: 1px solid var(--crm-border);
+  border-radius: 8px;
+  background: var(--crm-surface);
+  box-shadow: var(--crm-shadow);
+  padding: 18px;
+}
+
+h1,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 8px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1;
+}
+
+p,
+label {
+  color: var(--crm-muted);
+}
+
+.contact-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+select,
+.native-input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--crm-border);
+  border-radius: 8px;
+  background: white;
+  color: var(--crm-text);
+  padding: 10px 12px;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (width <= 820px) {
+  .contact-form {
+    grid-template-columns: 1fr;
+  }
+}

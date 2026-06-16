@@ -1,0 +1,40 @@
+<section class="reminders-page" aria-labelledby="reminders-title">
+  <div class="reminders-page__header">
+    <div>
+      <a routerLink="/contacts" class="back-link">← Все контакты</a>
+      <h1 id="reminders-title">Напоминания</h1>
+      <p>Все follow-up задачи по контактам. Отметка выполнения сохраняется в mock JSON.</p>
+    </div>
+    <span tuiBadge size="l" appearance="info">Ожидает: {{ store.pendingRemindersCount() }}</span>
+  </div>
+
+  <div class="reminder-list">
+    @for (item of store.reminders(); track item.contact.id + item.reminder.id) {
+      <article class="reminder-card" [class.reminder-card_done]="item.reminder.completed">
+        <div>
+          <span
+            tuiBadge
+            size="s"
+            [appearance]="item.reminder.completed ? 'positive' : isOverdue(item) ? 'destructive' : 'warning'"
+          >
+            {{ store.reminderStatusLabel(item) }}
+          </span>
+          <h2>{{ item.reminder.text }}</h2>
+          <p>
+            {{ item.reminder.dueDate }} ·
+            <a [routerLink]="['/contacts', item.contact.id]">{{ item.contact.name }}</a>
+            · {{ item.contact.company }}
+          </p>
+        </div>
+        <button tuiButton type="button" appearance="secondary" (click)="toggle(item)">
+          {{ item.reminder.completed ? 'Вернуть в работу' : 'Выполнено' }}
+        </button>
+      </article>
+    } @empty {
+      <section class="empty">
+        <h2>Напоминаний пока нет</h2>
+        <a tuiButton routerLink="/contacts">Вернуться к контактам</a>
+      </section>
+    }
+  </div>
+</section>

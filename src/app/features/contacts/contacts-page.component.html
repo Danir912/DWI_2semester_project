@@ -5,6 +5,9 @@
       <h1 id="crm-title">Контакты</h1>
     </div>
     <div class="hero-actions">
+      <a tuiButton routerLink="/contacts/reminders" appearance="secondary" aria-label="Напоминания">
+        Напоминания {{ store.pendingRemindersCount() ? '(' + store.pendingRemindersCount() + ')' : '' }}
+      </a>
       <a tuiButton routerLink="/contacts/trash" appearance="secondary">
         Корзина {{ store.trashCount() ? '(' + store.trashCount() + ')' : '' }}
       </a>
