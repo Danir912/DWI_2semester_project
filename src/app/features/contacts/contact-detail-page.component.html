@@ -1,0 +1,128 @@
+<section class="detail-page">
+  <a routerLink="/contacts" class="back-link">← Все контакты</a>
+
+  @if (contact(); as contact) {
+    <article class="panel detail" aria-labelledby="detail-title">
+      <div class="detail__header">
+        <div>
+          <span tuiBadge size="s" [appearance]="contact.status === 'active' ? 'positive' : 'neutral'">
+            {{ statusLabels[contact.status] }}
+          </span>
+          <h1 id="detail-title">{{ contact.name }}</h1>
+          <p>{{ contact.company }} · {{ contact.email }} · {{ contact.phone }}</p>
+        </div>
+        <div class="detail__actions">
+          <button tuiButton type="button" appearance="secondary" (click)="startEdit(contact)">Изменить</button>
+          <button tuiButton type="button" appearance="destructive" (click)="archive(contact)">Удалить</button>
+        </div>
+      </div>
+
+      @if (isEditing) {
+        <form [formGroup]="contactForm" (ngSubmit)="saveContact(contact)" class="contact-form">
+          <label>
+            Имя
+            <tui-textfield>
+              <input tuiTextfield formControlName="name" autocomplete="name">
+            </tui-textfield>
+          </label>
+          <label>
+            Компания
+            <tui-textfield>
+              <input tuiTextfield formControlName="company">
+            </tui-textfield>
+          </label>
+          <label>
+            Email
+            <tui-textfield>
+              <input tuiTextfield formControlName="email" type="email">
+            </tui-textfield>
+          </label>
+          <label>
+            Телефон
+            <tui-textfield>
+              <input tuiTextfield formControlName="phone" type="tel">
+            </tui-textfield>
+          </label>
+          <label>
+            Категория
+            <input class="native-input" formControlName="category">
+          </label>
+          <label>
+            Статус
+            <select formControlName="status">
+              <option value="new">Новый</option>
+              <option value="active">Активный</option>
+              <option value="inactive">Неактивный</option>
+            </select>
+          </label>
+          <label>
+            Следующий контакт
+            <input class="native-input" formControlName="nextContactAt" type="date">
+          </label>
+          <div class="form-actions">
+            <button tuiButton type="submit">Сохранить</button>
+            <button tuiButton type="button" appearance="flat" (click)="cancelEdit(contact)">Отмена</button>
+          </div>
+        </form>
+      }
+
+      <form [formGroup]="activityForm" class="activity" (ngSubmit)="addActivity(contact)">
+        <label>
+          Тип
+          <select formControlName="type">
+            <option value="call">Звонок</option>
+            <option value="meeting">Встреча</option>
+            <option value="email">Письмо</option>
+          </select>
+        </label>
+        <label>
+          Итог взаимодействия
+          <input class="native-input" formControlName="summary">
+        </label>
+        <label>
+          Заметка
+          <textarea formControlName="note" rows="3"></textarea>
+        </label>
+        <label>
+          Напоминание
+          <input class="native-input" formControlName="reminderText">
+        </label>
+        <label>
+          Дата
+          <input class="native-input" formControlName="reminderDate" type="date">
+        </label>
+        <button tuiButton type="submit" appearance="accent">Записать</button>
+      </form>
+
+      <div class="timeline">
+        <h2>История</h2>
+        @for (interaction of contact.interactions; track interaction.id) {
+          <article>
+            <span tuiBadge size="s">{{ interaction.type }}</span>
+            <strong>{{ interaction.date }}</strong>
+            <p>{{ interaction.summary }}</p>
+          </article>
+        }
+        @for (note of contact.notes; track note.id) {
+          <article>
+            <span tuiBadge size="s" appearance="info">note</span>
+            <strong>{{ note.createdAt }}</strong>
+            <p>{{ note.text }}</p>
+          </article>
+        }
+        @for (reminder of contact.reminders; track reminder.id) {
+          <article>
+            <span tuiBadge size="s" appearance="warning">reminder</span>
+            <strong>{{ reminder.dueDate }}</strong>
+            <p>{{ reminder.text }}</p>
+          </article>
+        }
+      </div>
+    </article>
+  } @else if (!store.loading()) {
+    <section class="panel empty">
+      <h1>Контакт не найден</h1>
+      <a tuiButton routerLink="/contacts">Вернуться к списку</a>
+    </section>
+  }
+</section>

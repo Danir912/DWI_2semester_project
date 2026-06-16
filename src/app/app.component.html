@@ -9,11 +9,11 @@
         </span>
       </a>
 
-      @if (auth.user$ | async; as user) {
+      @if (auth.user$ | async) {
         <nav class="topbar__nav" aria-label="Основная навигация">
           <a routerLink="/contacts">Контакты</a>
           <button type="button" class="ghost" (click)="auth.logout()">
-            Выйти, {{ user.name }}
+            Выйти
           </button>
         </nav>
       }

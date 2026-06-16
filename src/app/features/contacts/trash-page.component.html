@@ -1,0 +1,33 @@
+<section class="trash" aria-labelledby="trash-title">
+  <div class="trash__header">
+    <div>
+      <a routerLink="/contacts" class="back-link">← Все контакты</a>
+      <h1 id="trash-title">Корзина</h1>
+      <p>Удалённые контакты хранятся 7 дней. На этой странице их можно восстановить или удалить навсегда.</p>
+    </div>
+  </div>
+
+  <div class="trash-list">
+    @for (item of store.trash(); track item.contact.id) {
+      <article class="trash-card">
+        <div>
+          <span tuiBadge size="s" appearance="warning">до {{ formatDate(item.expiresAt) }}</span>
+          <h2>{{ item.contact.name }}</h2>
+          <p>{{ item.contact.company }} · {{ item.contact.email }}</p>
+          <small>Удалён: {{ formatDate(item.deletedAt) }}</small>
+        </div>
+        <div class="trash-card__actions">
+          <button tuiButton type="button" appearance="secondary" (click)="restore(item)">Восстановить</button>
+          <button tuiButton type="button" appearance="destructive" (click)="deleteForever(item)">
+            Удалить навсегда
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <section class="empty">
+        <h2>Корзина пуста</h2>
+        <a tuiButton routerLink="/contacts">Вернуться к контактам</a>
+      </section>
+    }
+  </div>
+</section>

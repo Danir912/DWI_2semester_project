@@ -44,7 +44,7 @@ npm run stylelint
 - `src/app/core` — auth service, guard, interceptor, API service.
 - `src/app/shared` — общие типы и модели.
 - `src/app/features/auth` — login flow.
-- `src/app/features/contacts` — CRM workspace, Signal Store, фильтры и статистика.
+- `src/app/features/contacts` — список контактов, карточка контакта, корзина, Signal Store, фильтры и статистика.
 - `mock/db.json` — mock-данные пользователей и контактов.
 
 ## Реализованные требования
@@ -55,6 +55,8 @@ npm run stylelint
 - CRUD контактов на mock API.
 - Поиск, фильтрация, сортировка.
 - Заметки, взаимодействия и напоминания в карточке контакта.
+- Отдельный маршрут карточки контакта: `/contacts/:id`.
+- Корзина удалённых контактов: `/contacts/trash`, восстановление и удаление навсегда.
 - Импорт и экспорт JSON.
 - Вычисляемые показатели: всего контактов, активные, просроченные напоминания, follow-up progress.
 - Адаптивная верстка desktop/tablet/mobile.

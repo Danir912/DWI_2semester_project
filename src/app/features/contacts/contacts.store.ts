@@ -5,6 +5,7 @@ import {catchError, exhaustMap, of, pipe, switchMap, tap} from 'rxjs';
 
 import {CrmApiService} from '../../core/api/crm-api.service';
 import {
+  ArchivedContact,
   Contact,
   ContactFilters,
   ContactPayload,
@@ -16,19 +17,63 @@ import {calculateStats, DEFAULT_FILTERS, filterContacts} from './contacts.utils'
 
 interface ContactsState {
   contacts: Contact[];
+  trash: ArchivedContact[];
   filters: ContactFilters;
   selectedId: string | null;
   loading: boolean;
   error: string | null;
 }
 
+const TRASH_STORAGE_KEY = 'contact-crm.trash';
+const TRASH_TTL_DAYS = 7;
+
 const initialState: ContactsState = {
   contacts: [],
+  trash: readTrash(),
   filters: DEFAULT_FILTERS,
   selectedId: null,
   loading: false,
   error: null,
 };
+
+function readTrash(): ArchivedContact[] {
+  if (typeof localStorage === 'undefined') {
+    return [];
+  }
+
+  const raw = localStorage.getItem(TRASH_STORAGE_KEY);
+
+  if (!raw) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(raw) as ArchivedContact[];
+  } catch {
+    localStorage.removeItem(TRASH_STORAGE_KEY);
+    return [];
+  }
+}
+
+function persistTrash(trash: ArchivedContact[]): void {
+  localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(trash));
+}
+
+function purgeExpired(trash: ArchivedContact[], today = new Date()): ArchivedContact[] {
+  return trash.filter((item) => new Date(item.expiresAt) > today);
+}
+
+function createArchivedContact(contact: Contact, deletedAt = new Date()): ArchivedContact {
+  const expiresAt = new Date(deletedAt);
+
+  expiresAt.setDate(expiresAt.getDate() + TRASH_TTL_DAYS);
+
+  return {
+    contact,
+    deletedAt: deletedAt.toISOString(),
+    expiresAt: expiresAt.toISOString(),
+  };
+}
 
 export const ContactsStore = signalStore(
   {providedIn: 'root'},
@@ -37,6 +82,7 @@ export const ContactsStore = signalStore(
     filteredContacts: computed(() => filterContacts(store.contacts(), store.filters())),
     categories: computed(() => Array.from(new Set(store.contacts().map((contact) => contact.category))).sort()),
     selectedContact: computed(() => store.contacts().find((contact) => contact.id === store.selectedId()) ?? null),
+    trashCount: computed(() => store.trash().length),
     stats: computed(() => calculateStats(store.contacts())),
   })),
   withMethods((store, api = inject(CrmApiService)) => ({
@@ -46,10 +92,17 @@ export const ContactsStore = signalStore(
         exhaustMap(() =>
           api.getContacts().pipe(
             tap((contacts) =>
-              patchState(store, {
-                contacts,
-                selectedId: contacts[0]?.id ?? null,
-                loading: false,
+              patchState(store, ({trash}) => {
+                const nextTrash = purgeExpired(trash);
+
+                persistTrash(nextTrash);
+
+                return {
+                  contacts,
+                  trash: nextTrash,
+                  selectedId: contacts[0]?.id ?? null,
+                  loading: false,
+                };
               }),
             ),
             catchError(() => {
@@ -74,6 +127,9 @@ export const ContactsStore = signalStore(
     },
     selectContact(id: string): void {
       patchState(store, {selectedId: id});
+    },
+    contactById(id: string): Contact | null {
+      return store.contacts().find((contact) => contact.id === id) ?? null;
     },
     createContact: rxMethod<ContactPayload>(
       pipe(
@@ -108,21 +164,66 @@ export const ContactsStore = signalStore(
         ),
       ),
     ),
-    deleteContact: rxMethod<string>(
+    archiveContact: rxMethod<Contact>(
       pipe(
-        switchMap((id) =>
-          api.deleteContact(id).pipe(
+        switchMap((contact) =>
+          api.deleteContact(contact.id).pipe(
             tap(() =>
-              patchState(store, ({contacts}) => {
-                const next = contacts.filter((contact) => contact.id !== id);
+              patchState(store, ({contacts, trash}) => {
+                const nextContacts = contacts.filter((item) => item.id !== contact.id);
+                const nextTrash = purgeExpired([
+                  createArchivedContact(contact),
+                  ...trash.filter((item) => item.contact.id !== contact.id),
+                ]);
 
-                return {contacts: next, selectedId: next[0]?.id ?? null};
+                persistTrash(nextTrash);
+
+                return {contacts: nextContacts, trash: nextTrash, selectedId: nextContacts[0]?.id ?? null};
               }),
             ),
           ),
         ),
       ),
     ),
+    restoreContact: rxMethod<ArchivedContact>(
+      pipe(
+        switchMap((archived) =>
+          api.restoreContact(archived.contact).pipe(
+            tap((contact) =>
+              patchState(store, ({contacts, trash}) => {
+                const nextTrash = trash.filter((item) => item.contact.id !== contact.id);
+
+                persistTrash(nextTrash);
+
+                return {
+                  contacts: [contact, ...contacts],
+                  trash: nextTrash,
+                  selectedId: contact.id,
+                };
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+    deleteArchivedForever(id: string): void {
+      patchState(store, ({trash}) => {
+        const nextTrash = trash.filter((item) => item.contact.id !== id);
+
+        persistTrash(nextTrash);
+
+        return {trash: nextTrash};
+      });
+    },
+    purgeExpiredTrash(): void {
+      patchState(store, ({trash}) => {
+        const nextTrash = purgeExpired(trash);
+
+        persistTrash(nextTrash);
+
+        return {trash: nextTrash};
+      });
+    },
     addInteraction(contactId: string, interaction: Interaction): void {
       patchState(store, ({contacts}) => ({
         contacts: contacts.map((contact) =>

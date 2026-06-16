@@ -19,6 +19,10 @@ export class CrmApiService {
     });
   }
 
+  restoreContact(contact: Contact): Observable<Contact> {
+    return this.http.post<Contact>('/api/contacts', contact);
+  }
+
   updateContact(contact: Contact): Observable<Contact> {
     return this.http.put<Contact>(`/api/contacts/${contact.id}`, contact);
   }

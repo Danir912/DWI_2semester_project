@@ -1,0 +1,64 @@
+.trash {
+  display: grid;
+  gap: 18px;
+}
+
+.back-link {
+  color: var(--crm-accent);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 8px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1;
+}
+
+.trash__header p,
+.trash-card p,
+.trash-card small {
+  color: var(--crm-muted);
+}
+
+.trash-list {
+  display: grid;
+  gap: 12px;
+}
+
+.trash-card,
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid var(--crm-border);
+  border-radius: 8px;
+  background: var(--crm-surface);
+  box-shadow: var(--crm-shadow);
+  padding: 18px;
+}
+
+.trash-card h2 {
+  margin: 10px 0 8px;
+}
+
+.trash-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (width <= 780px) {
+  .trash-card,
+  .empty {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

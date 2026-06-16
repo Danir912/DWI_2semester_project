@@ -1,10 +1,13 @@
 <section class="crm" aria-labelledby="crm-title">
   <div class="crm__hero">
     <div>
-      <p class="eyebrow">Рабочий прототип</p>
-      <h1 id="crm-title">Контакты, действия и follow-up в одном месте</h1>
+      <p class="eyebrow">Контактная база</p>
+      <h1 id="crm-title">Контакты</h1>
     </div>
     <div class="hero-actions">
+      <a tuiButton routerLink="/contacts/trash" appearance="secondary">
+        Корзина {{ store.trashCount() ? '(' + store.trashCount() + ')' : '' }}
+      </a>
       <label class="file-button">
         Импорт
         <input class="visually-hidden" type="file" accept="application/json" (change)="importContacts($event)">
@@ -33,47 +36,48 @@
   </div>
 
   <section class="workspace">
-    <aside class="panel filters" aria-label="Фильтры контактов">
-      <h2>Поиск</h2>
-      <tui-textfield>
-        <input
-          tuiTextfield
-          type="search"
-          placeholder="Имя, компания, email"
-          [value]="store.filters.search()"
-          (input)="store.setFilters({search: $any($event.target).value})"
+    <section class="panel contacts-browser" aria-label="Навигация по контактам">
+      <div class="filters">
+        <tui-textfield>
+          <input
+            tuiTextfield
+            type="search"
+            placeholder="Имя, компания, email"
+            [value]="store.filters.search()"
+            (input)="store.setFilters({search: $any($event.target).value})"
+          >
+        </tui-textfield>
+
+        <label>
+          Категория
+          <select [value]="store.filters.category()" (change)="store.setFilters({category: $any($event.target).value})">
+            <option value="all">Все категории</option>
+            @for (category of store.categories(); track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </label>
+
+        <label>
+          Сортировка
+          <select [value]="store.filters.sortBy()" (change)="store.setFilters({sortBy: $any($event.target).value})">
+            <option value="lastContactAt">Последний контакт</option>
+            <option value="nextContactAt">Следующий контакт</option>
+            <option value="name">Имя</option>
+          </select>
+        </label>
+
+        <tui-segmented
+          size="s"
+          [activeItemIndex]="statusFilterIndex()"
+          (activeItemIndexChange)="setStatusFilter($event)"
         >
-      </tui-textfield>
-
-      <label>
-        Категория
-        <select [value]="store.filters.category()" (change)="store.setFilters({category: $any($event.target).value})">
-          <option value="all">Все категории</option>
-          @for (category of store.categories(); track category) {
-            <option [value]="category">{{ category }}</option>
-          }
-        </select>
-      </label>
-
-      <label>
-        Сортировка
-        <select [value]="store.filters.sortBy()" (change)="store.setFilters({sortBy: $any($event.target).value})">
-          <option value="lastContactAt">Последний контакт</option>
-          <option value="nextContactAt">Следующий контакт</option>
-          <option value="name">Имя</option>
-        </select>
-      </label>
-
-      <tui-segmented
-        size="s"
-        [activeItemIndex]="statusFilterIndex()"
-        (activeItemIndexChange)="setStatusFilter($event)"
-      >
-        <button type="button">Все</button>
-        <button type="button">Новые</button>
-        <button type="button">Активные</button>
-        <button type="button">Неакт.</button>
-      </tui-segmented>
+          <button type="button">Все</button>
+          <button type="button">Новые</button>
+          <button type="button">Активные</button>
+          <button type="button">Неакт.</button>
+        </tui-segmented>
+      </div>
 
       @if (store.loading()) {
         <tui-loader size="l">Загрузка контактов</tui-loader>
@@ -83,14 +87,9 @@
         <tui-error [error]="store.error()" />
       }
 
-      <div class="contact-list">
+      <div class="contact-grid">
         @for (contact of store.filteredContacts(); track trackById($index, contact)) {
-          <button
-            type="button"
-            class="contact-list__item"
-            [class.contact-list__item_active]="store.selectedId() === contact.id"
-            (click)="store.selectContact(contact.id)"
-          >
+          <a class="contact-card" [routerLink]="['/contacts', contact.id]">
             <span>
               <strong>{{ contact.name }}</strong>
               <small>{{ contact.company }}</small>
@@ -98,15 +97,25 @@
             <span tuiBadge size="s" [appearance]="contact.status === 'active' ? 'positive' : 'neutral'">
               {{ statusLabels[contact.status] }}
             </span>
-          </button>
+            <dl>
+              <div>
+                <dt>Email</dt>
+                <dd>{{ contact.email }}</dd>
+              </div>
+              <div>
+                <dt>Follow-up</dt>
+                <dd>{{ contact.nextContactAt }}</dd>
+              </div>
+            </dl>
+          </a>
         } @empty {
           <p class="muted">Контакты не найдены</p>
         }
       </div>
-    </aside>
+    </section>
 
-    <section class="panel form-panel" aria-labelledby="form-title">
-      <h2 id="form-title">{{ editingId ? 'Редактировать контакт' : 'Новый контакт' }}</h2>
+    <aside class="panel form-panel" aria-labelledby="form-title">
+      <h2 id="form-title">Новый контакт</h2>
       <form [formGroup]="contactForm" (ngSubmit)="saveContact()" class="contact-form">
         <label>
           Имя
@@ -149,80 +158,10 @@
           <input class="native-input" formControlName="nextContactAt" type="date">
         </label>
         <div class="form-actions">
-          <button tuiButton type="submit">{{ editingId ? 'Сохранить' : 'Добавить' }}</button>
-          <button tuiButton type="button" appearance="flat" (click)="resetForm()">Сброс</button>
+          <button tuiButton type="submit">Добавить</button>
+          <button tuiButton type="button" appearance="flat" (click)="resetNewContactForm()">Очистить</button>
         </div>
       </form>
-    </section>
-
-    @if (store.selectedContact(); as contact) {
-      <section class="panel detail" aria-labelledby="detail-title">
-        <div class="detail__header">
-          <div>
-            <h2 id="detail-title">{{ contact.name }}</h2>
-            <p>{{ contact.company }} · {{ contact.email }} · {{ contact.phone }}</p>
-          </div>
-          <div class="detail__actions">
-            <button tuiButton type="button" appearance="secondary" (click)="edit(contact)">Изменить</button>
-            <button tuiButton type="button" appearance="destructive" (click)="store.deleteContact(contact.id)">
-              Удалить
-            </button>
-          </div>
-        </div>
-
-        <form [formGroup]="activityForm" class="activity" (ngSubmit)="addActivity(contact)">
-          <label>
-            Тип
-            <select formControlName="type">
-              <option value="call">Звонок</option>
-              <option value="meeting">Встреча</option>
-              <option value="email">Письмо</option>
-            </select>
-          </label>
-          <label>
-            Итог взаимодействия
-            <input class="native-input" formControlName="summary">
-          </label>
-          <label>
-            Заметка
-            <textarea formControlName="note" rows="3"></textarea>
-          </label>
-          <label>
-            Напоминание
-            <input class="native-input" formControlName="reminderText">
-          </label>
-          <label>
-            Дата
-            <input class="native-input" formControlName="reminderDate" type="date">
-          </label>
-          <button tuiButton type="submit" appearance="accent">Записать</button>
-        </form>
-
-        <div class="timeline">
-          <h3>История</h3>
-          @for (interaction of contact.interactions; track interaction.id) {
-            <article>
-              <span tuiBadge size="s">{{ interaction.type }}</span>
-              <strong>{{ interaction.date }}</strong>
-              <p>{{ interaction.summary }}</p>
-            </article>
-          }
-          @for (note of contact.notes; track note.id) {
-            <article>
-              <span tuiBadge size="s" appearance="info">note</span>
-              <strong>{{ note.createdAt }}</strong>
-              <p>{{ note.text }}</p>
-            </article>
-          }
-          @for (reminder of contact.reminders; track reminder.id) {
-            <article>
-              <span tuiBadge size="s" appearance="warning">reminder</span>
-              <strong>{{ reminder.dueDate }}</strong>
-              <p>{{ reminder.text }}</p>
-            </article>
-          }
-        </div>
-      </section>
-    }
+    </aside>
   </section>
 </section>

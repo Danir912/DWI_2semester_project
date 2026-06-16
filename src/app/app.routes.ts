@@ -14,6 +14,18 @@ export const APP_ROUTES: Routes = [
       import('./features/contacts/contacts-page.component').then((m) => m.ContactsPageComponent),
   },
   {
+    path: 'contacts/trash',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/contacts/trash-page.component').then((m) => m.TrashPageComponent),
+  },
+  {
+    path: 'contacts/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/contacts/contact-detail-page.component').then((m) => m.ContactDetailPageComponent),
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'contacts',

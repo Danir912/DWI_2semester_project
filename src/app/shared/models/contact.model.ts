@@ -36,6 +36,12 @@ export interface Contact {
   reminders: Reminder[];
 }
 
+export interface ArchivedContact {
+  contact: Contact;
+  deletedAt: string;
+  expiresAt: string;
+}
+
 export type ContactPayload = Omit<Contact, 'id'>;
 
 export interface ContactFilters {
