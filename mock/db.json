@@ -1,0 +1,93 @@
+{
+  "users": [
+    {
+      "id": "user-1",
+      "name": "Данир",
+      "email": "manager@example.com"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "contact-1",
+      "name": "Алина Соколова",
+      "company": "Northwind Logistics",
+      "email": "alina@northwind.test",
+      "phone": "+7 999 120-44-19",
+      "category": "Клиенты",
+      "status": "active",
+      "lastContactAt": "2026-06-12",
+      "nextContactAt": "2026-06-18",
+      "notes": [
+        {
+          "id": "note-1",
+          "createdAt": "2026-06-12",
+          "text": "Интересуется автоматизацией повторных заказов."
+        }
+      ],
+      "interactions": [
+        {
+          "id": "interaction-1",
+          "type": "call",
+          "date": "2026-06-12",
+          "summary": "Обсудили пилотный запуск CRM для отдела продаж."
+        }
+      ],
+      "reminders": [
+        {
+          "id": "reminder-1",
+          "dueDate": "2026-06-18",
+          "text": "Отправить КП после согласования бюджета.",
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "contact-2",
+      "name": "Игорь Волков",
+      "company": "DataBridge",
+      "email": "igor@databridge.test",
+      "phone": "+7 999 447-02-80",
+      "category": "Партнёры",
+      "status": "new",
+      "lastContactAt": "2026-06-09",
+      "nextContactAt": "2026-06-17",
+      "notes": [],
+      "interactions": [
+        {
+          "id": "interaction-2",
+          "type": "email",
+          "date": "2026-06-09",
+          "summary": "Получен запрос на совместный вебинар."
+        }
+      ],
+      "reminders": []
+    },
+    {
+      "id": "contact-3",
+      "name": "Мария Ким",
+      "company": "Retail Pro",
+      "email": "maria@retailpro.test",
+      "phone": "+7 999 771-16-33",
+      "category": "Лиды",
+      "status": "inactive",
+      "lastContactAt": "2026-05-28",
+      "nextContactAt": "2026-06-10",
+      "notes": [
+        {
+          "id": "note-2",
+          "createdAt": "2026-05-28",
+          "text": "Вернуться к разговору после внутреннего тендера."
+        }
+      ],
+      "interactions": [],
+      "reminders": [
+        {
+          "id": "reminder-2",
+          "dueDate": "2026-06-10",
+          "text": "Уточнить статус тендера.",
+          "completed": false
+        }
+      ]
+    }
+  ]
+}
