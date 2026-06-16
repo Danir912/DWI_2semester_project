@@ -1,0 +1,26 @@
+<tui-root>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" routerLink="/" aria-label="Contact CRM home">
+        <span class="brand__mark" aria-hidden="true">C</span>
+        <span>
+          <strong>Contact CRM</strong>
+          <small>контакты и взаимодействия</small>
+        </span>
+      </a>
+
+      @if (auth.user$ | async; as user) {
+        <nav class="topbar__nav" aria-label="Основная навигация">
+          <a routerLink="/contacts">Контакты</a>
+          <button type="button" class="ghost" (click)="auth.logout()">
+            Выйти, {{ user.name }}
+          </button>
+        </nav>
+      }
+    </header>
+
+    <main>
+      <router-outlet />
+    </main>
+  </div>
+</tui-root>

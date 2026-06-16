@@ -1,0 +1,45 @@
+.login {
+  display: grid;
+  min-height: calc(100vh - 160px);
+  place-items: center;
+}
+
+.login__panel {
+  width: min(100%, 460px);
+  padding: clamp(24px, 6vw, 40px);
+  border: 1px solid var(--crm-border);
+  border-radius: 8px;
+  background: white;
+  box-shadow: var(--crm-shadow);
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--crm-accent-2);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 3.4rem);
+  line-height: 1;
+}
+
+.lead {
+  margin: 16px 0 26px;
+  color: var(--crm-muted);
+  line-height: 1.55;
+}
+
+.login__form {
+  display: grid;
+  gap: 18px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--crm-muted);
+  font-weight: 700;
+}
