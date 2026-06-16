@@ -1,42 +1,42 @@
 <section class="edit-page">
   @if (contact(); as contact) {
-    <a [routerLink]="['/contacts', contact.id]" class="back-link">← Карточка контакта</a>
+    <a [routerLink]="['/contacts', contact.id]" class="back-link">{{ 'backContacts' | i18n }}</a>
 
     <section class="panel" aria-labelledby="edit-title">
-      <h1 id="edit-title">Изменить контакт</h1>
+      <h1 id="edit-title">{{ 'editContact' | i18n }}</h1>
       <p>{{ contact.name }} · {{ contact.company }}</p>
 
       <form [formGroup]="contactForm" (ngSubmit)="saveContact(contact)" class="contact-form">
         <label>
-          Имя
+          {{ 'name' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="name" autocomplete="name">
           </tui-textfield>
         </label>
         <label>
-          Компания
+          {{ 'company' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="company">
           </tui-textfield>
         </label>
         <label>
-          Email
+          {{ 'email' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="email" type="email">
           </tui-textfield>
         </label>
         <label>
-          Телефон
+          {{ 'phone' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="phone" type="tel">
           </tui-textfield>
         </label>
         <label>
-          Категория
+          {{ 'category' | i18n }}
           <input class="native-input" formControlName="category">
         </label>
         <label>
-          Статус
+          {{ 'status' | i18n }}
           <select formControlName="status">
             <option value="new">Новый</option>
             <option value="active">Активный</option>
@@ -44,13 +44,13 @@
           </select>
         </label>
         <label>
-          Следующий контакт
+          {{ 'nextContactField' | i18n }}
           <input class="native-input" formControlName="nextContactAt" type="date">
         </label>
         <div class="form-actions">
-          <button tuiButton type="submit">Сохранить</button>
+          <button tuiButton type="submit">{{ 'save' | i18n }}</button>
           <button tuiButton type="button" appearance="flat" (click)="resetChanges(contact)">
-            Вернуть исходные
+            {{ 'resetOriginal' | i18n }}
           </button>
         </div>
       </form>

@@ -1,5 +1,5 @@
 <section class="detail-page">
-  <a routerLink="/contacts" class="back-link">← Все контакты</a>
+  <a routerLink="/contacts" class="back-link">{{ 'backContacts' | i18n }}</a>
 
   @if (contact(); as contact) {
     <article class="panel detail" aria-labelledby="detail-title">
@@ -12,14 +12,14 @@
           <p>{{ contact.company }} · {{ contact.email }} · {{ contact.phone }}</p>
         </div>
         <div class="detail__actions">
-          <a tuiButton appearance="secondary" [routerLink]="['/contacts', contact.id, 'edit']">Изменить</a>
-          <button tuiButton type="button" appearance="destructive" (click)="archive(contact)">Удалить</button>
+          <a tuiButton appearance="secondary" [routerLink]="['/contacts', contact.id, 'edit']">{{ 'edit' | i18n }}</a>
+          <button tuiButton type="button" appearance="destructive" (click)="archive(contact)">{{ 'delete' | i18n }}</button>
         </div>
       </div>
 
       <form [formGroup]="activityForm" class="activity" (ngSubmit)="addActivity(contact)">
         <label>
-          Тип
+          {{ 'type' | i18n }}
           <select formControlName="type">
             <option value="call">Звонок</option>
             <option value="meeting">Встреча</option>
@@ -27,46 +27,46 @@
           </select>
         </label>
         <label>
-          Итог взаимодействия
+          {{ 'interactionSummary' | i18n }}
           <input class="native-input" formControlName="summary">
         </label>
         <label>
-          Заметка
+          {{ 'note' | i18n }}
           <textarea formControlName="note" rows="3"></textarea>
         </label>
         <label>
-          Напоминание
+          {{ 'reminder' | i18n }}
           <input class="native-input" formControlName="reminderText">
         </label>
         <label>
-          Дата
+          {{ 'date' | i18n }}
           <input class="native-input" formControlName="reminderDate" type="date">
         </label>
-        <button tuiButton type="submit" appearance="accent">Записать</button>
+        <button tuiButton type="submit" appearance="accent">{{ 'record' | i18n }}</button>
       </form>
 
       <section class="reminders" aria-labelledby="contact-reminders-title">
-        <h2 id="contact-reminders-title">Напоминания</h2>
+        <h2 id="contact-reminders-title">{{ 'contactReminders' | i18n }}</h2>
         @for (reminder of contact.reminders; track reminder.id) {
           <article class="reminder" [class.reminder_done]="reminder.completed">
             <div>
               <span tuiBadge size="s" [appearance]="reminder.completed ? 'positive' : 'warning'">
-                {{ reminder.completed ? 'Выполнено' : 'Ожидает' }}
+                {{ (reminder.completed ? 'completed' : 'pending') | i18n }}
               </span>
               <strong>{{ reminder.dueDate }}</strong>
               <p>{{ reminder.text }}</p>
             </div>
             <button tuiButton type="button" appearance="secondary" (click)="toggleReminder(contact, reminder)">
-              {{ reminder.completed ? 'Вернуть в работу' : 'Выполнено' }}
+              {{ (reminder.completed ? 'returnToWork' : 'completed') | i18n }}
             </button>
           </article>
         } @empty {
-          <p class="muted">Напоминаний пока нет</p>
+          <p class="muted">{{ 'noReminders' | i18n }}</p>
         }
       </section>
 
       <div class="timeline">
-        <h2>История</h2>
+        <h2>{{ 'history' | i18n }}</h2>
         @for (interaction of contact.interactions; track interaction.id) {
           <article>
             <span tuiBadge size="s">{{ interaction.type }}</span>

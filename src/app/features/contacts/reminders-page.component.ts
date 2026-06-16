@@ -5,11 +5,12 @@ import {TuiBadge} from '@taiga-ui/kit';
 
 import {ContactReminderItem} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
+import {I18nPipe} from '../../shared/pipes/i18n.pipe';
 
 @Component({
   selector: 'app-reminders-page',
   standalone: true,
-  imports: [RouterLink, TuiBadge, TuiButton],
+  imports: [I18nPipe, RouterLink, TuiBadge, TuiButton],
   templateUrl: './reminders-page.component.html',
   styleUrl: './reminders-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

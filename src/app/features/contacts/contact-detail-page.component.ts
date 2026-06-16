@@ -7,11 +7,12 @@ import {TuiBadge} from '@taiga-ui/kit';
 import {Contact, ContactStatus, InteractionType, Reminder} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
 import {createId} from './contacts.utils';
+import {I18nPipe} from '../../shared/pipes/i18n.pipe';
 
 @Component({
   selector: 'app-contact-detail-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TuiBadge, TuiButton],
+  imports: [I18nPipe, ReactiveFormsModule, RouterLink, TuiBadge, TuiButton],
   templateUrl: './contact-detail-page.component.html',
   styleUrl: './contact-detail-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

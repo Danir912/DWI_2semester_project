@@ -214,23 +214,29 @@ export const ContactsStore = signalStore(
     ),
     restoreContact: rxMethod<ArchivedContact>(
       pipe(
-        switchMap((archived) =>
-          api.restoreContact(archived.contact).pipe(
+        switchMap((archived) => {
+          const alreadyRestored = store.contacts().some((contact) => contact.id === archived.contact.id);
+          const nextTrash = store.trash().filter((item) => item.contact.id !== archived.contact.id);
+
+          persistTrash(nextTrash);
+          patchState(store, {
+            trash: nextTrash,
+            selectedId: archived.contact.id,
+          });
+
+          if (alreadyRestored) {
+            return of(archived.contact);
+          }
+
+          return api.restoreContact(archived.contact).pipe(
             tap((contact) =>
-              patchState(store, ({contacts, trash}) => {
-                const nextTrash = trash.filter((item) => item.contact.id !== contact.id);
-
-                persistTrash(nextTrash);
-
-                return {
-                  contacts: [contact, ...contacts],
-                  trash: nextTrash,
-                  selectedId: contact.id,
-                };
-              }),
+              patchState(store, ({contacts}) => ({
+                contacts: contacts.some((item) => item.id === contact.id) ? contacts : [contact, ...contacts],
+                selectedId: contact.id,
+              })),
             ),
-          ),
-        ),
+          );
+        }),
       ),
     ),
     deleteArchivedForever(id: string): void {

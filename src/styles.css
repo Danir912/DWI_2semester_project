@@ -14,6 +14,20 @@
   --crm-shadow: 0 8px 24px rgb(28 36 48 / 9%);
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --crm-bg: #101418;
+  --crm-surface: #171d24;
+  --crm-border: #2f3a47;
+  --crm-text: #eef3f8;
+  --crm-muted: #a8b3c2;
+  --crm-accent: #60a5fa;
+  --crm-accent-2: #5eead4;
+  --crm-danger: #fb923c;
+  --crm-shadow: 0 8px 24px rgb(0 0 0 / 24%);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -27,6 +41,12 @@ body {
   color: var(--crm-text);
 }
 
+:root[data-theme="dark"] body {
+  background:
+    linear-gradient(180deg, rgb(96 165 250 / 11%), transparent 320px),
+    var(--crm-bg);
+}
+
 button,
 input,
 select,
@@ -36,6 +56,21 @@ textarea {
 
 button {
   cursor: pointer;
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] .native-input,
+:root[data-theme="dark"] .file-button,
+:root[data-theme="dark"] .contact-card,
+:root[data-theme="dark"] .contact-list__item {
+  background: var(--crm-surface);
+  color: var(--crm-text);
+}
+
+:root[data-theme="dark"] input::placeholder {
+  color: var(--crm-muted);
 }
 
 .visually-hidden {

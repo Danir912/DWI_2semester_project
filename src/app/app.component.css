@@ -17,6 +17,10 @@
   backdrop-filter: blur(14px);
 }
 
+:host-context(:root[data-theme="dark"]) .topbar {
+  background: rgb(23 29 36 / 90%);
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -67,6 +71,15 @@
   color: var(--crm-text);
   padding: 0 14px;
   font-weight: 700;
+}
+
+.ghost_square {
+  min-width: 44px;
+  padding: 0 10px;
+}
+
+:host-context(:root[data-theme="dark"]) .ghost {
+  background: var(--crm-surface);
 }
 
 main {

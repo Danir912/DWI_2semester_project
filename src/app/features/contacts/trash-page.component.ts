@@ -5,11 +5,12 @@ import {TuiBadge} from '@taiga-ui/kit';
 
 import {ArchivedContact} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
+import {I18nPipe} from '../../shared/pipes/i18n.pipe';
 
 @Component({
   selector: 'app-trash-page',
   standalone: true,
-  imports: [RouterLink, TuiBadge, TuiButton],
+  imports: [I18nPipe, RouterLink, TuiBadge, TuiButton],
   templateUrl: './trash-page.component.html',
   styleUrl: './trash-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

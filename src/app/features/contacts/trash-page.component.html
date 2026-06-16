@@ -1,9 +1,9 @@
 <section class="trash" aria-labelledby="trash-title">
   <div class="trash__header">
     <div>
-      <a routerLink="/contacts" class="back-link">← Все контакты</a>
-      <h1 id="trash-title">Корзина</h1>
-      <p>Удалённые контакты хранятся 7 дней. На этой странице их можно восстановить или удалить навсегда.</p>
+      <a routerLink="/contacts" class="back-link">{{ 'backContacts' | i18n }}</a>
+      <h1 id="trash-title">{{ 'trash' | i18n }}</h1>
+      <p>{{ 'trashDescription' | i18n }}</p>
     </div>
   </div>
 
@@ -17,16 +17,16 @@
           <small>Удалён: {{ formatDate(item.deletedAt) }}</small>
         </div>
         <div class="trash-card__actions">
-          <button tuiButton type="button" appearance="secondary" (click)="restore(item)">Восстановить</button>
+          <button tuiButton type="button" appearance="secondary" (click)="restore(item)">{{ 'restore' | i18n }}</button>
           <button tuiButton type="button" appearance="destructive" (click)="deleteForever(item)">
-            Удалить навсегда
+            {{ 'deleteForever' | i18n }}
           </button>
         </div>
       </article>
     } @empty {
       <section class="empty">
-        <h2>Корзина пуста</h2>
-        <a tuiButton routerLink="/contacts">Вернуться к контактам</a>
+        <h2>{{ 'trashEmpty' | i18n }}</h2>
+        <a tuiButton routerLink="/contacts">{{ 'contacts' | i18n }}</a>
       </section>
     }
   </div>

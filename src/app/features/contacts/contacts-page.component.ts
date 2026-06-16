@@ -6,11 +6,22 @@ import {TuiBadge, TuiSegmented} from '@taiga-ui/kit';
 
 import {Contact, ContactPayload, ContactStatus} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
+import {I18nPipe} from '../../shared/pipes/i18n.pipe';
 
 @Component({
   selector: 'app-contacts-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TuiBadge, TuiButton, TuiError, TuiLoader, TuiSegmented, TuiTextfield],
+  imports: [
+    I18nPipe,
+    ReactiveFormsModule,
+    RouterLink,
+    TuiBadge,
+    TuiButton,
+    TuiError,
+    TuiLoader,
+    TuiSegmented,
+    TuiTextfield,
+  ],
   templateUrl: './contacts-page.component.html',
   styleUrl: './contacts-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

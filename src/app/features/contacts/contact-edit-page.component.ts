@@ -5,11 +5,12 @@ import {TuiButton, TuiTextfield} from '@taiga-ui/core';
 
 import {Contact, ContactPayload, ContactStatus} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
+import {I18nPipe} from '../../shared/pipes/i18n.pipe';
 
 @Component({
   selector: 'app-contact-edit-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TuiButton, TuiTextfield],
+  imports: [I18nPipe, ReactiveFormsModule, RouterLink, TuiButton, TuiTextfield],
   templateUrl: './contact-edit-page.component.html',
   styleUrl: './contact-edit-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

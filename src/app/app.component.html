@@ -5,15 +5,21 @@
         <span class="brand__mark" aria-hidden="true">C</span>
         <span>
           <strong>Contact CRM</strong>
-          <small>контакты и взаимодействия</small>
+          <small>{{ 'appSubtitle' | i18n }}</small>
         </span>
       </a>
 
       @if (auth.user$ | async) {
         <nav class="topbar__nav" aria-label="Основная навигация">
-          <a routerLink="/contacts">Контакты</a>
+          <a routerLink="/contacts">{{ 'contacts' | i18n }}</a>
+          <button type="button" class="ghost ghost_square" (click)="preferences.toggleLanguage()">
+            {{ 'language' | i18n }}
+          </button>
+          <button type="button" class="ghost" (click)="preferences.toggleTheme()">
+            {{ (preferences.theme() === 'light' ? 'themeDark' : 'themeLight') | i18n }}
+          </button>
           <button type="button" class="ghost" (click)="auth.logout()">
-            Выйти
+            {{ 'logout' | i18n }}
           </button>
         </nav>
       }

@@ -1,11 +1,11 @@
 <section class="reminders-page" aria-labelledby="reminders-title">
   <div class="reminders-page__header">
     <div>
-      <a routerLink="/contacts" class="back-link">← Все контакты</a>
-      <h1 id="reminders-title">Напоминания</h1>
-      <p>Все follow-up задачи по контактам. Отметка выполнения сохраняется в mock JSON.</p>
+      <a routerLink="/contacts" class="back-link">{{ 'backContacts' | i18n }}</a>
+      <h1 id="reminders-title">{{ 'reminders' | i18n }}</h1>
+      <p>{{ 'remindersDescription' | i18n }}</p>
     </div>
-    <span tuiBadge size="l" appearance="info">Ожидает: {{ store.pendingRemindersCount() }}</span>
+    <span tuiBadge size="l" appearance="info">{{ 'pendingCount' | i18n }}: {{ store.pendingRemindersCount() }}</span>
   </div>
 
   <div class="reminder-list">
@@ -27,12 +27,12 @@
           </p>
         </div>
         <button tuiButton type="button" appearance="secondary" (click)="toggle(item)">
-          {{ item.reminder.completed ? 'Вернуть в работу' : 'Выполнено' }}
+          {{ (item.reminder.completed ? 'returnToWork' : 'completed') | i18n }}
         </button>
       </article>
     } @empty {
       <section class="empty">
-        <h2>Напоминаний пока нет</h2>
+        <h2>{{ 'noReminders' | i18n }}</h2>
         <a tuiButton routerLink="/contacts">Вернуться к контактам</a>
       </section>
     }

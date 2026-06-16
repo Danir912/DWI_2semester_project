@@ -1,40 +1,40 @@
 <section class="crm" aria-labelledby="crm-title">
   <div class="crm__hero">
     <div>
-      <p class="eyebrow">Контактная база</p>
-      <h1 id="crm-title">Контакты</h1>
+      <p class="eyebrow">{{ 'workspace' | i18n }}</p>
+      <h1 id="crm-title">{{ 'contactsTitle' | i18n }}</h1>
     </div>
     <div class="hero-actions">
       <a tuiButton routerLink="/contacts/reminders" appearance="secondary" aria-label="Напоминания">
-        Напоминания {{ store.pendingRemindersCount() ? '(' + store.pendingRemindersCount() + ')' : '' }}
+        {{ 'reminders' | i18n }} {{ store.pendingRemindersCount() ? '(' + store.pendingRemindersCount() + ')' : '' }}
       </a>
       <a tuiButton routerLink="/contacts/trash" appearance="secondary">
-        Корзина {{ store.trashCount() ? '(' + store.trashCount() + ')' : '' }}
+        {{ 'trash' | i18n }} {{ store.trashCount() ? '(' + store.trashCount() + ')' : '' }}
       </a>
       <label class="file-button">
-        Импорт
+        {{ 'import' | i18n }}
         <input class="visually-hidden" type="file" accept="application/json" (change)="importContacts($event)">
       </label>
-      <button tuiButton type="button" appearance="secondary" (click)="exportContacts()">Экспорт</button>
+      <button tuiButton type="button" appearance="secondary" (click)="exportContacts()">{{ 'export' | i18n }}</button>
     </div>
   </div>
 
   <div class="stats" aria-label="CRM показатели">
     <article>
       <strong>{{ store.stats().total }}</strong>
-      <span>контактов</span>
+      <span>{{ 'totalContacts' | i18n }}</span>
     </article>
     <article>
       <strong>{{ store.stats().active }}</strong>
-      <span>активных</span>
+      <span>{{ 'activeContacts' | i18n }}</span>
     </article>
     <article>
       <strong>{{ store.stats().overdueReminders }}</strong>
-      <span>просрочено</span>
+      <span>{{ 'overdue' | i18n }}</span>
     </article>
     <article>
       <strong>{{ store.stats().followUpProgress }}%</strong>
-      <span>с follow-up</span>
+      <span>{{ 'withFollowUp' | i18n }}</span>
     </article>
   </div>
 
@@ -45,16 +45,16 @@
           <input
             tuiTextfield
             type="search"
-            placeholder="Имя, компания, email"
+            [placeholder]="'searchPlaceholder' | i18n"
             [value]="store.filters.search()"
             (input)="store.setFilters({search: $any($event.target).value})"
           >
         </tui-textfield>
 
         <label>
-          Категория
+          {{ 'category' | i18n }}
           <select [value]="store.filters.category()" (change)="store.setFilters({category: $any($event.target).value})">
-            <option value="all">Все категории</option>
+            <option value="all">{{ 'allCategories' | i18n }}</option>
             @for (category of store.categories(); track category) {
               <option [value]="category">{{ category }}</option>
             }
@@ -62,11 +62,11 @@
         </label>
 
         <label>
-          Сортировка
+          {{ 'sort' | i18n }}
           <select [value]="store.filters.sortBy()" (change)="store.setFilters({sortBy: $any($event.target).value})">
-            <option value="lastContactAt">Последний контакт</option>
-            <option value="nextContactAt">Следующий контакт</option>
-            <option value="name">Имя</option>
+            <option value="lastContactAt">{{ 'lastContact' | i18n }}</option>
+            <option value="nextContactAt">{{ 'nextContact' | i18n }}</option>
+            <option value="name">{{ 'name' | i18n }}</option>
           </select>
         </label>
 
@@ -75,10 +75,10 @@
           [activeItemIndex]="statusFilterIndex()"
           (activeItemIndexChange)="setStatusFilter($event)"
         >
-          <button type="button">Все</button>
-          <button type="button">Новые</button>
-          <button type="button">Активные</button>
-          <button type="button">Неакт.</button>
+          <button type="button">{{ 'all' | i18n }}</button>
+          <button type="button">{{ 'new' | i18n }}</button>
+          <button type="button">{{ 'active' | i18n }}</button>
+          <button type="button">{{ 'inactiveShort' | i18n }}</button>
         </tui-segmented>
       </div>
 
@@ -118,38 +118,38 @@
     </section>
 
     <aside class="panel form-panel" aria-labelledby="form-title">
-      <h2 id="form-title">Новый контакт</h2>
+      <h2 id="form-title">{{ 'newContact' | i18n }}</h2>
       <form [formGroup]="contactForm" (ngSubmit)="saveContact()" class="contact-form">
         <label>
-          Имя
+          {{ 'name' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="name" autocomplete="name">
           </tui-textfield>
         </label>
         <label>
-          Компания
+          {{ 'company' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="company">
           </tui-textfield>
         </label>
         <label>
-          Email
+          {{ 'email' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="email" type="email">
           </tui-textfield>
         </label>
         <label>
-          Телефон
+          {{ 'phone' | i18n }}
           <tui-textfield>
             <input tuiTextfield formControlName="phone" type="tel">
           </tui-textfield>
         </label>
         <label>
-          Категория
+          {{ 'category' | i18n }}
           <input class="native-input" formControlName="category">
         </label>
         <label>
-          Статус
+          {{ 'status' | i18n }}
           <select formControlName="status">
             <option value="new">Новый</option>
             <option value="active">Активный</option>
@@ -157,12 +157,12 @@
           </select>
         </label>
         <label>
-          Следующий контакт
+          {{ 'nextContactField' | i18n }}
           <input class="native-input" formControlName="nextContactAt" type="date">
         </label>
         <div class="form-actions">
-          <button tuiButton type="submit">Добавить</button>
-          <button tuiButton type="button" appearance="flat" (click)="resetNewContactForm()">Очистить</button>
+          <button tuiButton type="submit">{{ 'add' | i18n }}</button>
+          <button tuiButton type="button" appearance="flat" (click)="resetNewContactForm()">{{ 'clear' | i18n }}</button>
         </div>
       </form>
     </aside>
