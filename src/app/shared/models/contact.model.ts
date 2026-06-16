@@ -23,6 +23,7 @@ export interface Note {
 
 export interface Contact {
   id: string;
+  importedAt?: string;
   name: string;
   company: string;
   email: string;

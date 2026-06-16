@@ -17,13 +17,13 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --crm-bg: #101418;
-  --crm-surface: #171d24;
-  --crm-border: #2f3a47;
-  --crm-text: #eef3f8;
-  --crm-muted: #a8b3c2;
-  --crm-accent: #60a5fa;
-  --crm-accent-2: #5eead4;
+  --crm-bg: #151a21;
+  --crm-surface: #202833;
+  --crm-border: #3b4654;
+  --crm-text: #f4f7fb;
+  --crm-muted: #c1cad6;
+  --crm-accent: #7bb3ff;
+  --crm-accent-2: #6ee7d8;
   --crm-danger: #fb923c;
   --crm-shadow: 0 8px 24px rgb(0 0 0 / 24%);
 }
@@ -43,7 +43,7 @@ body {
 
 :root[data-theme="dark"] body {
   background:
-    linear-gradient(180deg, rgb(96 165 250 / 11%), transparent 320px),
+    linear-gradient(180deg, rgb(123 179 255 / 10%), transparent 320px),
     var(--crm-bg);
 }
 

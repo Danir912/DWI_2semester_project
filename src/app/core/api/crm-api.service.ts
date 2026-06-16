@@ -23,6 +23,10 @@ export class CrmApiService {
     return this.http.post<Contact>('/api/contacts', contact);
   }
 
+  upsertContact(contact: Contact, exists: boolean): Observable<Contact> {
+    return exists ? this.updateContact(contact) : this.restoreContact(contact);
+  }
+
   updateContact(contact: Contact): Observable<Contact> {
     return this.http.put<Contact>(`/api/contacts/${contact.id}`, contact);
   }

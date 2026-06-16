@@ -9,7 +9,7 @@
   padding: clamp(24px, 6vw, 40px);
   border: 1px solid var(--crm-border);
   border-radius: 8px;
-  background: white;
+  background: var(--crm-surface);
   box-shadow: var(--crm-shadow);
 }
 

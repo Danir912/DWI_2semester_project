@@ -14,7 +14,7 @@ test.afterAll(async () => {
     (contact) =>
       !['qa@example.test', 'trash@example.test', 'edit@example.test', 'reminder@example.test'].includes(
         contact.email,
-      ),
+      ) && contact.email !== 'import@example.test',
   );
   delete db.$schema;
   await writeFile(dbPath, `${JSON.stringify(db, null, 2)}\n`);
@@ -101,4 +101,20 @@ test('marks reminder as completed', async ({page}) => {
 
   await reminder.getByRole('button', {name: 'Выполнено'}).click();
   await expect(reminder.getByText('Выполнено')).toBeVisible();
+});
+
+test('persists imported contacts after reload', async ({page}) => {
+  await page.goto('/login');
+  await page.getByRole('button', {name: 'Войти'}).click();
+
+  const importResponse = page.waitForResponse(
+    (response) => response.url().includes('/contacts') && response.request().method() === 'POST',
+  );
+
+  await page.locator('input[type="file"]').setInputFiles('tests/fixtures/import-contacts.json');
+  await importResponse;
+  await expect(page.getByRole('link', {name: /Imported Contact/})).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole('link', {name: /Imported Contact/})).toBeVisible();
 });

@@ -6,8 +6,11 @@
       <div class="detail__header">
         <div>
           <span tuiBadge size="s" [appearance]="contact.status === 'active' ? 'positive' : 'neutral'">
-            {{ statusLabels[contact.status] }}
+            {{ ('status' + (contact.status === 'new' ? 'New' : contact.status === 'active' ? 'Active' : 'Inactive')) | i18n }}
           </span>
+          @if (contact.importedAt) {
+            <span tuiBadge size="s" appearance="info">{{ 'imported' | i18n }}</span>
+          }
           <h1 id="detail-title">{{ contact.name }}</h1>
           <p>{{ contact.company }} · {{ contact.email }} · {{ contact.phone }}</p>
         </div>

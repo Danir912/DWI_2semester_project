@@ -4,7 +4,7 @@ import {Router, RouterLink} from '@angular/router';
 import {TuiButton} from '@taiga-ui/core';
 import {TuiBadge} from '@taiga-ui/kit';
 
-import {Contact, ContactStatus, InteractionType, Reminder} from '../../shared/models/contact.model';
+import {Contact, InteractionType, Reminder} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
 import {createId} from './contacts.utils';
 import {I18nPipe} from '../../shared/pipes/i18n.pipe';
@@ -24,11 +24,6 @@ export class ContactDetailPageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   protected readonly today = new Date().toISOString().slice(0, 10);
-  protected readonly statusLabels: Record<ContactStatus, string> = {
-    new: 'Новый',
-    active: 'Активный',
-    inactive: 'Неактивный',
-  };
   protected readonly contact = computed(() => this.store.contactById(this.id()));
 
   protected readonly activityForm = this.fb.nonNullable.group({

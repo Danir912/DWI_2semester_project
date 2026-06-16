@@ -1,0 +1,16 @@
+[
+  {
+    "id": "import-contact-1",
+    "name": "Imported Contact",
+    "company": "Import Studio",
+    "email": "import@example.test",
+    "phone": "+7 900 444-44-44",
+    "category": "Imported",
+    "status": "new",
+    "lastContactAt": "2026-06-16",
+    "nextContactAt": "2026-06-20",
+    "notes": [],
+    "interactions": [],
+    "reminders": []
+  }
+]

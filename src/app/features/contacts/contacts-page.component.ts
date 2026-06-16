@@ -30,11 +30,6 @@ export class ContactsPageComponent implements OnInit {
   protected readonly store = inject(ContactsStore);
   private readonly fb = inject(FormBuilder);
   protected readonly today = new Date().toISOString().slice(0, 10);
-  protected readonly statusLabels: Record<ContactStatus, string> = {
-    new: 'Новый',
-    active: 'Активный',
-    inactive: 'Неактивный',
-  };
   protected readonly statusOptions: Array<ContactStatus | 'all'> = ['all', 'new', 'active', 'inactive'];
   protected readonly statusFilterIndex = computed(() =>
     this.statusOptions.indexOf(this.store.filters.status()),

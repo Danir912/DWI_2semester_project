@@ -1,7 +1,7 @@
 import {computed, inject} from '@angular/core';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {patchState, signalStore, withComputed, withMethods, withState} from '@ngrx/signals';
-import {catchError, exhaustMap, of, pipe, switchMap, tap} from 'rxjs';
+import {catchError, forkJoin, exhaustMap, of, pipe, switchMap, tap} from 'rxjs';
 
 import {CrmApiService} from '../../core/api/crm-api.service';
 import {
@@ -74,6 +74,10 @@ function createArchivedContact(contact: Contact, deletedAt = new Date()): Archiv
     deletedAt: deletedAt.toISOString(),
     expiresAt: expiresAt.toISOString(),
   };
+}
+
+function createImportId(): string {
+  return `imported-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 export const ContactsStore = signalStore(
@@ -306,7 +310,43 @@ export const ContactsStore = signalStore(
       return item.reminder.completed ? 'Выполнено' : 'Ожидает';
     },
     importContacts(contacts: Contact[]): void {
-      patchState(store, {contacts, selectedId: contacts[0]?.id ?? null});
+      const importedAt = new Date().toISOString();
+      const existingIds = new Set(store.contacts().map((contact) => contact.id));
+      const normalized = contacts.map((contact) => ({
+        ...contact,
+        id: contact.id || createImportId(),
+        importedAt,
+      }));
+      const importedIds = new Set(normalized.map((contact) => contact.id));
+      const nextContacts = [
+        ...normalized,
+        ...store.contacts().filter((contact) => !importedIds.has(contact.id)),
+      ];
+
+      patchState(store, {
+        contacts: nextContacts,
+        selectedId: normalized[0]?.id ?? store.selectedId(),
+        loading: true,
+        error: null,
+      });
+
+      const requests = normalized.map((contact) => api.upsertContact(contact, existingIds.has(contact.id)));
+
+      if (!requests.length) {
+        patchState(store, {loading: false});
+        return;
+      }
+
+      forkJoin(requests).subscribe({
+        next: (savedContacts) =>
+          patchState(store, ({contacts: currentContacts}) => ({
+            contacts: currentContacts.map(
+              (contact) => savedContacts.find((saved) => saved.id === contact.id) ?? contact,
+            ),
+            loading: false,
+          })),
+        error: () => patchState(store, {loading: false, error: 'Импортированные контакты не синхронизированы'}),
+      });
     },
     };
   }),

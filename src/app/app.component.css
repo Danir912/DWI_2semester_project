@@ -67,7 +67,7 @@
   min-height: 38px;
   border: 1px solid var(--crm-border);
   border-radius: 8px;
-  background: white;
+  background: var(--crm-surface);
   color: var(--crm-text);
   padding: 0 14px;
   font-weight: 700;

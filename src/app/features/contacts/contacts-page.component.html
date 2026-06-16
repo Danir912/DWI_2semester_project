@@ -98,8 +98,11 @@
               <small>{{ contact.company }}</small>
             </span>
             <span tuiBadge size="s" [appearance]="contact.status === 'active' ? 'positive' : 'neutral'">
-              {{ statusLabels[contact.status] }}
+              {{ ('status' + (contact.status === 'new' ? 'New' : contact.status === 'active' ? 'Active' : 'Inactive')) | i18n }}
             </span>
+            @if (contact.importedAt) {
+              <span tuiBadge size="s" appearance="info">{{ 'imported' | i18n }}</span>
+            }
             <dl>
               <div>
                 <dt>Email</dt>
@@ -151,9 +154,9 @@
         <label>
           {{ 'status' | i18n }}
           <select formControlName="status">
-            <option value="new">Новый</option>
-            <option value="active">Активный</option>
-            <option value="inactive">Неактивный</option>
+            <option value="new">{{ 'statusNew' | i18n }}</option>
+            <option value="active">{{ 'statusActive' | i18n }}</option>
+            <option value="inactive">{{ 'statusInactive' | i18n }}</option>
           </select>
         </label>
         <label>
