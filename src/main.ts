@@ -6,11 +6,12 @@ import {provideRouter, withComponentInputBinding} from '@angular/router';
 import {AppComponent} from './app/app.component';
 import {APP_ROUTES} from './app/app.routes';
 import {authInterceptor} from './app/core/interceptors/auth.interceptor';
+import {staticApiInterceptor} from './app/core/api/static-api.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideAnimations(),
     provideRouter(APP_ROUTES, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([staticApiInterceptor, authInterceptor])),
   ],
 }).catch((error: unknown) => console.error(error));

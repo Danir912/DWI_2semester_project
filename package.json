@@ -6,6 +6,7 @@
     "start": "ng serve --host 127.0.0.1 --port 4300",
     "mock": "json-server mock/db.json --host 127.0.0.1 --port 3000",
     "build": "ng build --configuration production",
+    "pages:prepare": "node tools/prepare-pages.mjs",
     "test": "jest --passWithNoTests",
     "test:e2e": "playwright test",
     "lint": "eslint . --ext .ts",
