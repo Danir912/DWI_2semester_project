@@ -52,6 +52,13 @@ const STATIC_DATABASE: StaticDatabase = {
           text: 'Отправить КП после согласования бюджета.',
           completed: false,
         },
+        {
+          id: 'reminder-2',
+          dueDate: '2026-06-14',
+          text: 'Проверить договор NDA.',
+          completed: true,
+          completedAt: '2026-06-15T10:00:00.000Z',
+        },
       ],
     },
     {
@@ -63,8 +70,14 @@ const STATIC_DATABASE: StaticDatabase = {
       category: 'Партнёры',
       status: 'active',
       lastContactAt: '2026-06-09',
-      nextContactAt: '2026-06-17',
-      notes: [],
+      nextContactAt: '2026-06-24',
+      notes: [
+        {
+          id: 'note-2',
+          createdAt: '2026-06-09',
+          text: 'Готовит список тем для совместного вебинара.',
+        },
+      ],
       interactions: [
         {
           id: 'interaction-2',
@@ -73,7 +86,14 @@ const STATIC_DATABASE: StaticDatabase = {
           summary: 'Получен запрос на совместный вебинар.',
         },
       ],
-      reminders: [],
+      reminders: [
+        {
+          id: 'reminder-3',
+          dueDate: '2026-06-24',
+          text: 'Согласовать дату вебинара.',
+          completed: false,
+        },
+      ],
     },
     {
       id: 'contact-3',
@@ -82,23 +102,31 @@ const STATIC_DATABASE: StaticDatabase = {
       email: 'maria@retailpro.test',
       phone: '+7 999 771-16-33',
       category: 'Лиды',
-      status: 'new',
-      lastContactAt: '2026-05-28',
-      nextContactAt: '2026-06-10',
+      status: 'inactive',
+      lastContactAt: '2026-05-01',
+      nextContactAt: '',
       notes: [
         {
-          id: 'note-2',
+          id: 'note-3',
           createdAt: '2026-05-28',
           text: 'Вернуться к разговору после внутреннего тендера.',
         },
       ],
-      interactions: [],
+      interactions: [
+        {
+          id: 'interaction-3',
+          type: 'meeting',
+          date: '2026-05-01',
+          summary: 'Провели первичную встречу и обсудили тендерный процесс.',
+        },
+      ],
       reminders: [
         {
-          id: 'reminder-2',
+          id: 'reminder-4',
           dueDate: '2026-06-10',
           text: 'Уточнить статус тендера.',
-          completed: false,
+          completed: true,
+          completedAt: '2026-06-16T09:00:00.000Z',
         },
       ],
     },
