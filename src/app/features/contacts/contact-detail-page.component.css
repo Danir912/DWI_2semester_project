@@ -52,13 +52,6 @@ label {
   gap: 10px;
 }
 
-.activity {
-  display: grid;
-  gap: 14px;
-  grid-template-columns: 150px 1fr 1fr;
-  align-items: end;
-}
-
 label {
   display: grid;
   gap: 7px;
@@ -66,8 +59,34 @@ label {
   font-weight: 800;
 }
 
-.activity label:nth-of-type(3) {
-  grid-column: span 2;
+.action-forms {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.85fr);
+}
+
+.action-form {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border-top: 1px solid var(--crm-border);
+  padding-top: 14px;
+}
+
+.action-form h2 {
+  margin-bottom: 2px;
+  font-size: 1.05rem;
+}
+
+.action-form_interaction {
+  grid-row: span 2;
+  grid-template-columns: minmax(130px, 0.7fr) minmax(160px, 1fr);
+}
+
+.action-form_interaction h2,
+.action-form__wide,
+.action-form_interaction button {
+  grid-column: 1 / -1;
 }
 
 select,
@@ -140,16 +159,13 @@ textarea {
     flex-direction: column;
   }
 
-  .activity {
+  .action-forms,
+  .action-form_interaction {
     grid-template-columns: 1fr;
   }
 
   .reminder {
     align-items: stretch;
     flex-direction: column;
-  }
-
-  .activity label:nth-of-type(3) {
-    grid-column: auto;
   }
 }

@@ -26,12 +26,17 @@ export class ContactDetailPageComponent implements OnInit {
   protected readonly today = new Date().toISOString().slice(0, 10);
   protected readonly contact = computed(() => this.store.contactById(this.id()));
 
-  protected readonly activityForm = this.fb.nonNullable.group({
+  protected readonly interactionForm = this.fb.nonNullable.group({
     type: ['call' as InteractionType, Validators.required],
-    summary: [''],
-    note: [''],
-    reminderText: [''],
-    reminderDate: [this.today],
+    date: [this.today, Validators.required],
+    summary: ['', Validators.required],
+  });
+  protected readonly noteForm = this.fb.nonNullable.group({
+    text: ['', Validators.required],
+  });
+  protected readonly reminderForm = this.fb.nonNullable.group({
+    text: ['', Validators.required],
+    dueDate: [this.today, Validators.required],
   });
 
   ngOnInit(): void {
@@ -49,41 +54,63 @@ export class ContactDetailPageComponent implements OnInit {
     void this.router.navigateByUrl('/contacts');
   }
 
-  protected addActivity(contact: Contact): void {
-    const value = this.activityForm.getRawValue();
-
-    if (value.summary.trim()) {
-      this.store.addInteraction(contact.id, {
-        id: createId('interaction'),
-        type: value.type,
-        date: this.today,
-        summary: value.summary.trim(),
-      });
+  protected addInteraction(contact: Contact): void {
+    if (this.interactionForm.invalid || !this.interactionForm.controls.summary.value.trim()) {
+      this.interactionForm.markAllAsTouched();
+      return;
     }
 
-    if (value.note.trim()) {
-      this.store.addNote(contact.id, {
-        id: createId('note'),
-        createdAt: this.today,
-        text: value.note.trim(),
-      });
-    }
+    const value = this.interactionForm.getRawValue();
 
-    if (value.reminderText.trim()) {
-      this.store.addReminder(contact.id, {
-        id: createId('reminder'),
-        dueDate: value.reminderDate,
-        text: value.reminderText.trim(),
-        completed: false,
-      });
-    }
+    this.store.addInteraction(contact.id, {
+      id: createId('interaction'),
+      type: value.type,
+      date: value.date,
+      summary: value.summary.trim(),
+    });
 
-    this.activityForm.reset({
+    this.interactionForm.reset({
       type: 'call',
+      date: this.today,
       summary: '',
-      note: '',
-      reminderText: '',
-      reminderDate: this.today,
+    });
+  }
+
+  protected addNote(contact: Contact): void {
+    if (this.noteForm.invalid || !this.noteForm.controls.text.value.trim()) {
+      this.noteForm.markAllAsTouched();
+      return;
+    }
+
+    const value = this.noteForm.getRawValue();
+
+    this.store.addNote(contact.id, {
+      id: createId('note'),
+      createdAt: this.today,
+      text: value.text.trim(),
+    });
+
+    this.noteForm.reset({text: ''});
+  }
+
+  protected addReminder(contact: Contact): void {
+    if (this.reminderForm.invalid || !this.reminderForm.controls.text.value.trim()) {
+      this.reminderForm.markAllAsTouched();
+      return;
+    }
+
+    const value = this.reminderForm.getRawValue();
+
+    this.store.addReminder(contact.id, {
+      id: createId('reminder'),
+      dueDate: value.dueDate,
+      text: value.text.trim(),
+      completed: false,
+    });
+
+    this.reminderForm.reset({
+      text: '',
+      dueDate: this.today,
     });
   }
 

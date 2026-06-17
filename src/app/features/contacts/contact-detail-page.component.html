@@ -5,8 +5,19 @@
     <article class="panel detail" aria-labelledby="detail-title">
       <div class="detail__header">
         <div>
-          <span tuiBadge size="s" [appearance]="contact.status === 'active' ? 'positive' : 'neutral'">
-            {{ ('status' + (contact.status === 'new' ? 'New' : contact.status === 'active' ? 'Active' : 'Inactive')) | i18n }}
+          <span
+            tuiBadge
+            size="s"
+            [appearance]="contact.status === 'active' ? 'positive' : 'neutral'"
+          >
+            {{
+              'status' +
+                (contact.status === 'new'
+                  ? 'New'
+                  : contact.status === 'active'
+                    ? 'Active'
+                    : 'Inactive') | i18n
+            }}
           </span>
           @if (contact.importedAt) {
             <span tuiBadge size="s" appearance="info">{{ 'imported' | i18n }}</span>
@@ -15,38 +26,67 @@
           <p>{{ contact.company }} · {{ contact.email }} · {{ contact.phone }}</p>
         </div>
         <div class="detail__actions">
-          <a tuiButton appearance="secondary" [routerLink]="['/contacts', contact.id, 'edit']">{{ 'edit' | i18n }}</a>
-          <button tuiButton type="button" appearance="destructive" (click)="archive(contact)">{{ 'delete' | i18n }}</button>
+          <a tuiButton appearance="secondary" [routerLink]="['/contacts', contact.id, 'edit']">{{
+            'edit' | i18n
+          }}</a>
+          <button tuiButton type="button" appearance="destructive" (click)="archive(contact)">
+            {{ 'delete' | i18n }}
+          </button>
         </div>
       </div>
 
-      <form [formGroup]="activityForm" class="activity" (ngSubmit)="addActivity(contact)">
-        <label>
-          {{ 'type' | i18n }}
-          <select formControlName="type">
-            <option value="call">Звонок</option>
-            <option value="meeting">Встреча</option>
-            <option value="email">Письмо</option>
-          </select>
-        </label>
-        <label>
-          {{ 'interactionSummary' | i18n }}
-          <input class="native-input" formControlName="summary">
-        </label>
-        <label>
-          {{ 'note' | i18n }}
-          <textarea formControlName="note" rows="3"></textarea>
-        </label>
-        <label>
-          {{ 'reminder' | i18n }}
-          <input class="native-input" formControlName="reminderText">
-        </label>
-        <label>
-          {{ 'date' | i18n }}
-          <input class="native-input" formControlName="reminderDate" type="date">
-        </label>
-        <button tuiButton type="submit" appearance="accent">{{ 'record' | i18n }}</button>
-      </form>
+      <section class="action-forms" aria-label="Действия с контактом">
+        <form
+          [formGroup]="interactionForm"
+          class="action-form action-form_interaction"
+          (ngSubmit)="addInteraction(contact)"
+        >
+          <h2>{{ 'addInteraction' | i18n }}</h2>
+          <label>
+            {{ 'type' | i18n }}
+            <select formControlName="type">
+              <option value="call">{{ 'interactionCall' | i18n }}</option>
+              <option value="meeting">{{ 'interactionMeeting' | i18n }}</option>
+              <option value="email">{{ 'interactionEmail' | i18n }}</option>
+            </select>
+          </label>
+          <label>
+            {{ 'date' | i18n }}
+            <input class="native-input" formControlName="date" type="date" [max]="today" />
+          </label>
+          <label class="action-form__wide">
+            {{ 'interactionSummary' | i18n }}
+            <textarea formControlName="summary" rows="3"></textarea>
+          </label>
+          <button tuiButton type="submit" appearance="accent">
+            {{ 'recordInteraction' | i18n }}
+          </button>
+        </form>
+
+        <form [formGroup]="reminderForm" class="action-form" (ngSubmit)="addReminder(contact)">
+          <h2>{{ 'addReminder' | i18n }}</h2>
+          <label>
+            {{ 'reminder' | i18n }}
+            <input class="native-input" formControlName="text" />
+          </label>
+          <label>
+            {{ 'date' | i18n }}
+            <input class="native-input" formControlName="dueDate" type="date" />
+          </label>
+          <button tuiButton type="submit" appearance="secondary">
+            {{ 'saveReminder' | i18n }}
+          </button>
+        </form>
+
+        <form [formGroup]="noteForm" class="action-form" (ngSubmit)="addNote(contact)">
+          <h2>{{ 'addNote' | i18n }}</h2>
+          <label>
+            {{ 'note' | i18n }}
+            <textarea formControlName="text" rows="4"></textarea>
+          </label>
+          <button tuiButton type="submit" appearance="secondary">{{ 'saveNote' | i18n }}</button>
+        </form>
+      </section>
 
       <section class="reminders" aria-labelledby="contact-reminders-title">
         <h2 id="contact-reminders-title">{{ 'contactReminders' | i18n }}</h2>
@@ -59,7 +99,12 @@
               <strong>{{ reminder.dueDate }}</strong>
               <p>{{ reminder.text }}</p>
             </div>
-            <button tuiButton type="button" appearance="secondary" (click)="toggleReminder(contact, reminder)">
+            <button
+              tuiButton
+              type="button"
+              appearance="secondary"
+              (click)="toggleReminder(contact, reminder)"
+            >
               {{ (reminder.completed ? 'returnToWork' : 'completed') | i18n }}
             </button>
           </article>
@@ -72,23 +117,32 @@
         <h2>{{ 'history' | i18n }}</h2>
         @for (interaction of contact.interactions; track interaction.id) {
           <article>
-            <span tuiBadge size="s">{{ interaction.type }}</span>
+            <span tuiBadge size="s">{{
+              'interaction' +
+                (interaction.type === 'call'
+                  ? 'Call'
+                  : interaction.type === 'meeting'
+                    ? 'Meeting'
+                    : 'Email') | i18n
+            }}</span>
             <strong>{{ interaction.date }}</strong>
             <p>{{ interaction.summary }}</p>
           </article>
         }
         @for (note of contact.notes; track note.id) {
           <article>
-            <span tuiBadge size="s" appearance="info">note</span>
+            <span tuiBadge size="s" appearance="info">{{ 'note' | i18n }}</span>
             <strong>{{ note.createdAt }}</strong>
             <p>{{ note.text }}</p>
           </article>
         }
         @for (reminder of contact.reminders; track reminder.id) {
           <article>
-            <span tuiBadge size="s" [appearance]="reminder.completed ? 'positive' : 'warning'">reminder</span>
+            <span tuiBadge size="s" [appearance]="reminder.completed ? 'positive' : 'warning'">
+              {{ 'reminder' | i18n }}
+            </span>
             <strong>{{ reminder.dueDate }}</strong>
-            <p>{{ reminder.text }} · {{ reminder.completed ? 'выполнено' : 'ожидает' }}</p>
+            <p>{{ reminder.text }} · {{ (reminder.completed ? 'completed' : 'pending') | i18n }}</p>
           </article>
         }
       </div>

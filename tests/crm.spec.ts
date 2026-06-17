@@ -12,9 +12,12 @@ test.afterAll(async () => {
 
   db.contacts = db.contacts.filter(
     (contact) =>
-      !['qa@example.test', 'trash@example.test', 'edit@example.test', 'reminder@example.test'].includes(
-        contact.email,
-      ) && contact.email !== 'import@example.test',
+      ![
+        'qa@example.test',
+        'trash@example.test',
+        'edit@example.test',
+        'reminder@example.test',
+      ].includes(contact.email) && contact.email !== 'import@example.test',
   );
   delete db.$schema;
   await writeFile(dbPath, `${JSON.stringify(db, null, 2)}\n`);
@@ -92,7 +95,7 @@ test('marks reminder as completed', async ({page}) => {
   await page.getByRole('button', {name: 'Добавить'}).click();
   await page.getByRole('link', {name: /Reminder Candidate/}).click();
   await page.getByLabel('Напоминание').fill('Проверить выполнение');
-  await page.getByRole('button', {name: 'Записать'}).click();
+  await page.getByRole('button', {name: 'Сохранить напоминание'}).click();
   await page.getByRole('link', {name: /Все контакты/}).click();
   await page.getByRole('link', {name: /Напоминания/}).click();
   await expect(page.getByRole('heading', {name: 'Напоминания'})).toBeVisible();
