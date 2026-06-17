@@ -34,6 +34,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Stylelint
+        run: npm run stylelint
+
       - name: Unit tests
         run: npm test
 
