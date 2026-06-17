@@ -106,6 +106,40 @@ describe('contacts utils', () => {
     expect(normalized.status).toBe('active');
   });
 
+  it('adds completion date to migrated completed reminders', () => {
+    const normalized = normalizeContact(
+      {
+        ...contacts[0]!,
+        reminders: [{id: 'done', dueDate: '2026-06-18', text: 'Done', completed: true}],
+      },
+      new Date('2026-06-20T10:00:00.000Z'),
+    );
+
+    expect(normalized.reminders[0]?.completedAt).toBe('2026-06-20T10:00:00.000Z');
+  });
+
+  it('purges completed reminders after one week', () => {
+    const normalized = normalizeContact(
+      {
+        ...contacts[0]!,
+        nextContactAt: '2026-06-18',
+        reminders: [
+          {
+            id: 'done',
+            dueDate: '2026-06-18',
+            text: 'Done',
+            completed: true,
+            completedAt: '2026-06-10T10:00:00.000Z',
+          },
+        ],
+      },
+      new Date('2026-06-18T10:00:00.000Z'),
+    );
+
+    expect(normalized.reminders).toEqual([]);
+    expect(normalized.nextContactAt).toBe('');
+  });
+
   it('keeps nearest future follow-up date', () => {
     expect(resolveNextContactAt('2026-07-16', '2026-06-23', new Date('2026-06-16'))).toBe(
       '2026-06-23',

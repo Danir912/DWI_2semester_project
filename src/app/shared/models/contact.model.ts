@@ -13,6 +13,7 @@ export interface Reminder {
   dueDate: string;
   text: string;
   completed: boolean;
+  completedAt?: string;
 }
 
 export interface Note {
@@ -46,6 +47,11 @@ export interface ArchivedContact {
 export interface ContactReminderItem {
   contact: Contact;
   reminder: Reminder;
+}
+
+export interface ContactNoteItem {
+  contact: Contact;
+  note: Note;
 }
 
 export type ContactPayload = Omit<Contact, 'id'>;

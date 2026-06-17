@@ -35,10 +35,6 @@
           {{ 'category' | i18n }}
           <input class="native-input" formControlName="category" />
         </label>
-        <label>
-          {{ 'nextContactField' | i18n }}
-          <input class="native-input" formControlName="nextContactAt" type="date" />
-        </label>
         <div class="form-actions">
           <button tuiButton type="submit">{{ 'save' | i18n }}</button>
           <button tuiButton type="button" appearance="flat" (click)="resetChanges(contact)">

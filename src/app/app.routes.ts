@@ -5,7 +5,8 @@ import {authGuard} from './core/auth/auth.guard';
 export const APP_ROUTES: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login-page.component').then((m) => m.LoginPageComponent),
+    loadComponent: () =>
+      import('./features/auth/login-page.component').then((m) => m.LoginPageComponent),
   },
   {
     path: 'contacts',
@@ -26,16 +27,26 @@ export const APP_ROUTES: Routes = [
       import('./features/contacts/reminders-page.component').then((m) => m.RemindersPageComponent),
   },
   {
+    path: 'contacts/notes',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/contacts/notes-page.component').then((m) => m.NotesPageComponent),
+  },
+  {
     path: 'contacts/:id/edit',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/contacts/contact-edit-page.component').then((m) => m.ContactEditPageComponent),
+      import('./features/contacts/contact-edit-page.component').then(
+        (m) => m.ContactEditPageComponent,
+      ),
   },
   {
     path: 'contacts/:id',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/contacts/contact-detail-page.component').then((m) => m.ContactDetailPageComponent),
+      import('./features/contacts/contact-detail-page.component').then(
+        (m) => m.ContactDetailPageComponent,
+      ),
   },
   {
     path: '',

@@ -13,6 +13,8 @@ export const DEFAULT_FILTERS: ContactFilters = {
   sortBy: 'lastContactAt',
 };
 
+const COMPLETED_REMINDER_TTL_DAYS = 7;
+
 export function filterContacts(contacts: Contact[], filters: ContactFilters): Contact[] {
   const query = filters.search.trim().toLowerCase();
 
@@ -68,8 +70,22 @@ export function createId(prefix: string): string {
 }
 
 export function normalizeContact(contact: Contact, today = new Date()): Contact {
+  const remindersWithCompletionDate = contact.reminders.map((reminder) =>
+    reminder.completed && !reminder.completedAt
+      ? {...reminder, completedAt: today.toISOString()}
+      : reminder,
+  );
+  const reminders = purgeExpiredCompletedReminders(remindersWithCompletionDate, today);
+  const pendingFollowUp = resolvePendingFollowUp(reminders, today);
+  const currentFollowUpBelongsToReminder = contact.reminders.some(
+    (reminder) => reminder.dueDate === contact.nextContactAt,
+  );
+
   return {
     ...contact,
+    reminders,
+    nextContactAt:
+      pendingFollowUp || (currentFollowUpBelongsToReminder ? '' : contact.nextContactAt),
     status: resolveContactStatus(contact, today),
   };
 }
@@ -123,6 +139,22 @@ export function resolvePendingFollowUp(reminders: Reminder[], today = new Date()
       .map((reminder) => reminder.dueDate)
       .sort(compareDateKeys)[0] ?? ''
   );
+}
+
+export function purgeExpiredCompletedReminders(
+  reminders: Reminder[],
+  today = new Date(),
+): Reminder[] {
+  const todayValue = dateValue(toDateKey(today));
+  const ttl = COMPLETED_REMINDER_TTL_DAYS * 24 * 60 * 60 * 1000;
+
+  return reminders.filter((reminder) => {
+    if (!reminder.completed || !reminder.completedAt) {
+      return true;
+    }
+
+    return todayValue - dateValue(reminder.completedAt.slice(0, 10)) < ttl;
+  });
 }
 
 function toDateKey(date: Date): string {

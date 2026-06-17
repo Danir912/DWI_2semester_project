@@ -9,6 +9,9 @@
         {{ 'reminders' | i18n }}
         {{ store.pendingRemindersCount() ? '(' + store.pendingRemindersCount() + ')' : '' }}
       </a>
+      <a tuiButton routerLink="/contacts/notes" appearance="secondary" aria-label="Заметки">
+        {{ 'notes' | i18n }} {{ store.notesCount() ? '(' + store.notesCount() + ')' : '' }}
+      </a>
       <a tuiButton routerLink="/contacts/trash" appearance="secondary">
         {{ 'trash' | i18n }} {{ store.trashCount() ? '(' + store.trashCount() + ')' : '' }}
       </a>

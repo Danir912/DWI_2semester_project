@@ -8,6 +8,7 @@ import {
   ArchivedContact,
   Contact,
   ContactFilters,
+  ContactNoteItem,
   ContactPayload,
   ContactReminderItem,
   Interaction,
@@ -107,6 +108,18 @@ export const ContactsStore = signalStore(
             new Date(left.reminder.dueDate).getTime() - new Date(right.reminder.dueDate).getTime(),
         ),
     ),
+    notes: computed<ContactNoteItem[]>(() =>
+      store
+        .contacts()
+        .flatMap((contact) => contact.notes.map((note) => ({contact, note})))
+        .sort(
+          (left, right) =>
+            new Date(right.note.createdAt).getTime() - new Date(left.note.createdAt).getTime(),
+        ),
+    ),
+    notesCount: computed(() =>
+      store.contacts().reduce((sum, contact) => sum + contact.notes.length, 0),
+    ),
     pendingRemindersCount: computed(() =>
       store
         .contacts()
@@ -140,10 +153,17 @@ export const ContactsStore = signalStore(
           tap(() => patchState(store, {loading: true, error: null})),
           exhaustMap(() =>
             api.getContacts().pipe(
-              tap((contacts) =>
+              tap((contacts) => {
+                const normalizedContacts = contacts.map((contact) => normalizeContact(contact));
+
+                normalizedContacts.forEach((contact, index) => {
+                  if (JSON.stringify(contact) !== JSON.stringify(contacts[index])) {
+                    api.updateContact(contact).subscribe();
+                  }
+                });
+
                 patchState(store, ({trash}) => {
                   const nextTrash = purgeExpired(trash);
-                  const normalizedContacts = contacts.map((contact) => normalizeContact(contact));
 
                   persistTrash(nextTrash);
 
@@ -153,8 +173,8 @@ export const ContactsStore = signalStore(
                     selectedId: normalizedContacts[0]?.id ?? null,
                     loading: false,
                   };
-                }),
-              ),
+                });
+              }),
               catchError(() => {
                 patchState(store, {loading: false, error: 'Не удалось загрузить контакты'});
                 return of(null);
@@ -336,8 +356,15 @@ export const ContactsStore = signalStore(
           return;
         }
 
+        const completedAt = new Date().toISOString();
         const reminders = contact.reminders.map((reminder) =>
-          reminder.id === reminderId ? {...reminder, completed} : reminder,
+          reminder.id === reminderId
+            ? {
+                ...reminder,
+                completed,
+                completedAt: completed ? completedAt : undefined,
+              }
+            : reminder,
         );
         const pendingFollowUp = resolvePendingFollowUp(reminders);
         const currentFollowUpBelongsToReminder = contact.reminders.some(

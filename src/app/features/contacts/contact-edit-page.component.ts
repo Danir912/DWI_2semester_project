@@ -37,7 +37,6 @@ export class ContactEditPageComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     phone: ['', Validators.required],
     category: ['Клиенты', Validators.required],
-    nextContactAt: [''],
   });
 
   constructor() {
@@ -64,6 +63,7 @@ export class ContactEditPageComponent implements OnInit {
       ...this.contactForm.getRawValue(),
       status: contact.status,
       lastContactAt: contact.lastContactAt,
+      nextContactAt: contact.nextContactAt,
       notes: contact.notes,
       interactions: contact.interactions,
       reminders: contact.reminders,
@@ -84,7 +84,6 @@ export class ContactEditPageComponent implements OnInit {
       email: contact.email,
       phone: contact.phone,
       category: contact.category,
-      nextContactAt: contact.nextContactAt,
     });
   }
 }
