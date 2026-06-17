@@ -48,7 +48,7 @@
       "email": "igor@databridge.test",
       "phone": "+7 999 447-02-80",
       "category": "Партнёры",
-      "status": "new",
+      "status": "active",
       "lastContactAt": "2026-06-09",
       "nextContactAt": "2026-06-17",
       "notes": [],
@@ -69,7 +69,7 @@
       "email": "maria@retailpro.test",
       "phone": "+7 999 771-16-33",
       "category": "Лиды",
-      "status": "inactive",
+      "status": "new",
       "lastContactAt": "2026-05-28",
       "nextContactAt": "2026-06-10",
       "notes": [

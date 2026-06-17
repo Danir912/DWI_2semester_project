@@ -6,16 +6,24 @@
     </div>
     <div class="hero-actions">
       <a tuiButton routerLink="/contacts/reminders" appearance="secondary" aria-label="Напоминания">
-        {{ 'reminders' | i18n }} {{ store.pendingRemindersCount() ? '(' + store.pendingRemindersCount() + ')' : '' }}
+        {{ 'reminders' | i18n }}
+        {{ store.pendingRemindersCount() ? '(' + store.pendingRemindersCount() + ')' : '' }}
       </a>
       <a tuiButton routerLink="/contacts/trash" appearance="secondary">
         {{ 'trash' | i18n }} {{ store.trashCount() ? '(' + store.trashCount() + ')' : '' }}
       </a>
       <label class="file-button">
         {{ 'import' | i18n }}
-        <input class="visually-hidden" type="file" accept="application/json" (change)="importContacts($event)">
+        <input
+          class="visually-hidden"
+          type="file"
+          accept="application/json"
+          (change)="importContacts($event)"
+        />
       </label>
-      <button tuiButton type="button" appearance="secondary" (click)="exportContacts()">{{ 'export' | i18n }}</button>
+      <button tuiButton type="button" appearance="secondary" (click)="exportContacts()">
+        {{ 'export' | i18n }}
+      </button>
     </div>
   </div>
 
@@ -48,12 +56,15 @@
             [placeholder]="'searchPlaceholder' | i18n"
             [value]="store.filters.search()"
             (input)="store.setFilters({search: $any($event.target).value})"
-          >
+          />
         </tui-textfield>
 
         <label>
           {{ 'category' | i18n }}
-          <select [value]="store.filters.category()" (change)="store.setFilters({category: $any($event.target).value})">
+          <select
+            [value]="store.filters.category()"
+            (change)="store.setFilters({category: $any($event.target).value})"
+          >
             <option value="all">{{ 'allCategories' | i18n }}</option>
             @for (category of store.categories(); track category) {
               <option [value]="category">{{ category }}</option>
@@ -63,7 +74,10 @@
 
         <label>
           {{ 'sort' | i18n }}
-          <select [value]="store.filters.sortBy()" (change)="store.setFilters({sortBy: $any($event.target).value})">
+          <select
+            [value]="store.filters.sortBy()"
+            (change)="store.setFilters({sortBy: $any($event.target).value})"
+          >
             <option value="lastContactAt">{{ 'lastContact' | i18n }}</option>
             <option value="nextContactAt">{{ 'nextContact' | i18n }}</option>
             <option value="name">{{ 'name' | i18n }}</option>
@@ -97,8 +111,19 @@
               <strong>{{ contact.name }}</strong>
               <small>{{ contact.company }}</small>
             </span>
-            <span tuiBadge size="s" [appearance]="contact.status === 'active' ? 'positive' : 'neutral'">
-              {{ ('status' + (contact.status === 'new' ? 'New' : contact.status === 'active' ? 'Active' : 'Inactive')) | i18n }}
+            <span
+              tuiBadge
+              size="s"
+              [appearance]="contact.status === 'active' ? 'positive' : 'neutral'"
+            >
+              {{
+                'status' +
+                  (contact.status === 'new'
+                    ? 'New'
+                    : contact.status === 'active'
+                      ? 'Active'
+                      : 'Inactive') | i18n
+              }}
             </span>
             @if (contact.importedAt) {
               <span tuiBadge size="s" appearance="info">{{ 'imported' | i18n }}</span>
@@ -126,46 +151,36 @@
         <label>
           {{ 'name' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="name" autocomplete="name">
+            <input tuiTextfield formControlName="name" autocomplete="name" />
           </tui-textfield>
         </label>
         <label>
           {{ 'company' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="company">
+            <input tuiTextfield formControlName="company" />
           </tui-textfield>
         </label>
         <label>
           {{ 'email' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="email" type="email">
+            <input tuiTextfield formControlName="email" type="email" />
           </tui-textfield>
         </label>
         <label>
           {{ 'phone' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="phone" type="tel">
+            <input tuiTextfield formControlName="phone" type="tel" />
           </tui-textfield>
         </label>
         <label>
           {{ 'category' | i18n }}
-          <input class="native-input" formControlName="category">
-        </label>
-        <label>
-          {{ 'status' | i18n }}
-          <select formControlName="status">
-            <option value="new">{{ 'statusNew' | i18n }}</option>
-            <option value="active">{{ 'statusActive' | i18n }}</option>
-            <option value="inactive">{{ 'statusInactive' | i18n }}</option>
-          </select>
-        </label>
-        <label>
-          {{ 'nextContactField' | i18n }}
-          <input class="native-input" formControlName="nextContactAt" type="date">
+          <input class="native-input" formControlName="category" />
         </label>
         <div class="form-actions">
           <button tuiButton type="submit">{{ 'add' | i18n }}</button>
-          <button tuiButton type="button" appearance="flat" (click)="resetNewContactForm()">{{ 'clear' | i18n }}</button>
+          <button tuiButton type="button" appearance="flat" (click)="resetNewContactForm()">
+            {{ 'clear' | i18n }}
+          </button>
         </div>
       </form>
     </aside>

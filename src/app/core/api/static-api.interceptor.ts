@@ -61,7 +61,7 @@ const STATIC_DATABASE: StaticDatabase = {
       email: 'igor@databridge.test',
       phone: '+7 999 447-02-80',
       category: 'Партнёры',
-      status: 'new',
+      status: 'active',
       lastContactAt: '2026-06-09',
       nextContactAt: '2026-06-17',
       notes: [],
@@ -82,7 +82,7 @@ const STATIC_DATABASE: StaticDatabase = {
       email: 'maria@retailpro.test',
       phone: '+7 999 771-16-33',
       category: 'Лиды',
-      status: 'inactive',
+      status: 'new',
       lastContactAt: '2026-05-28',
       nextContactAt: '2026-06-10',
       notes: [
@@ -129,9 +129,7 @@ export const staticApiInterceptor: HttpInterceptorFn = (request, next) => {
     if (request.method === 'GET' && id) {
       const contact = db.contacts.find((item) => item.id === id);
 
-      return contact
-        ? of(new HttpResponse({status: 200, body: contact}))
-        : notFound(request.url);
+      return contact ? of(new HttpResponse({status: 200, body: contact})) : notFound(request.url);
     }
 
     if (request.method === 'POST') {

@@ -10,42 +10,34 @@
         <label>
           {{ 'name' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="name" autocomplete="name">
+            <input tuiTextfield formControlName="name" autocomplete="name" />
           </tui-textfield>
         </label>
         <label>
           {{ 'company' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="company">
+            <input tuiTextfield formControlName="company" />
           </tui-textfield>
         </label>
         <label>
           {{ 'email' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="email" type="email">
+            <input tuiTextfield formControlName="email" type="email" />
           </tui-textfield>
         </label>
         <label>
           {{ 'phone' | i18n }}
           <tui-textfield>
-            <input tuiTextfield formControlName="phone" type="tel">
+            <input tuiTextfield formControlName="phone" type="tel" />
           </tui-textfield>
         </label>
         <label>
           {{ 'category' | i18n }}
-          <input class="native-input" formControlName="category">
-        </label>
-        <label>
-          {{ 'status' | i18n }}
-          <select formControlName="status">
-            <option value="new">{{ 'statusNew' | i18n }}</option>
-            <option value="active">{{ 'statusActive' | i18n }}</option>
-            <option value="inactive">{{ 'statusInactive' | i18n }}</option>
-          </select>
+          <input class="native-input" formControlName="category" />
         </label>
         <label>
           {{ 'nextContactField' | i18n }}
-          <input class="native-input" formControlName="nextContactAt" type="date">
+          <input class="native-input" formControlName="nextContactAt" type="date" />
         </label>
         <div class="form-actions">
           <button tuiButton type="submit">{{ 'save' | i18n }}</button>

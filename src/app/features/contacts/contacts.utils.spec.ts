@@ -1,5 +1,12 @@
 import {Contact} from '../../shared/models/contact.model';
-import {calculateStats, filterContacts} from './contacts.utils';
+import {
+  calculateStats,
+  filterContacts,
+  normalizeContact,
+  resolveContactStatus,
+  resolveNextContactAt,
+  resolvePendingFollowUp,
+} from './contacts.utils';
 
 const contacts: Contact[] = [
   {
@@ -13,7 +20,7 @@ const contacts: Contact[] = [
     lastContactAt: '2026-06-10',
     nextContactAt: '2026-06-20',
     notes: [],
-    interactions: [],
+    interactions: [{id: 'i1', type: 'call', date: '2026-06-10', summary: 'Follow-up call'}],
     reminders: [],
   },
   {
@@ -74,5 +81,53 @@ describe('contacts utils', () => {
     expect(stats.active).toBe(1);
     expect(stats.overdueReminders).toBe(1);
     expect(stats.followUpProgress).toBe(50);
+  });
+
+  it('resolves status from interaction history', () => {
+    expect(resolveContactStatus(contacts[1]!, new Date('2026-06-16'))).toBe('new');
+    expect(resolveContactStatus(contacts[0]!, new Date('2026-06-16'))).toBe('active');
+    expect(
+      resolveContactStatus(
+        {
+          ...contacts[0]!,
+          interactions: [{id: 'old', type: 'email', date: '2026-04-01', summary: 'Old email'}],
+        },
+        new Date('2026-06-16'),
+      ),
+    ).toBe('inactive');
+  });
+
+  it('normalizes stored contact status', () => {
+    const normalized = normalizeContact(
+      {...contacts[0]!, status: 'inactive'},
+      new Date('2026-06-16'),
+    );
+
+    expect(normalized.status).toBe('active');
+  });
+
+  it('keeps nearest future follow-up date', () => {
+    expect(resolveNextContactAt('2026-07-16', '2026-06-23', new Date('2026-06-16'))).toBe(
+      '2026-06-23',
+    );
+    expect(resolveNextContactAt('2026-06-23', '2026-07-16', new Date('2026-06-16'))).toBe(
+      '2026-06-23',
+    );
+    expect(resolveNextContactAt('2026-06-23', '2026-06-10', new Date('2026-06-16'))).toBe(
+      '2026-06-23',
+    );
+  });
+
+  it('resolves pending follow-up from incomplete future reminders', () => {
+    expect(
+      resolvePendingFollowUp(
+        [
+          {id: 'past', dueDate: '2026-06-10', text: 'Past', completed: false},
+          {id: 'done', dueDate: '2026-06-17', text: 'Done', completed: true},
+          {id: 'future', dueDate: '2026-06-20', text: 'Future', completed: false},
+        ],
+        new Date('2026-06-16'),
+      ),
+    ).toBe('2026-06-20');
   });
 });

@@ -29,8 +29,12 @@ import {I18nPipe} from '../../shared/pipes/i18n.pipe';
 export class ContactsPageComponent implements OnInit {
   protected readonly store = inject(ContactsStore);
   private readonly fb = inject(FormBuilder);
-  protected readonly today = new Date().toISOString().slice(0, 10);
-  protected readonly statusOptions: Array<ContactStatus | 'all'> = ['all', 'new', 'active', 'inactive'];
+  protected readonly statusOptions: Array<ContactStatus | 'all'> = [
+    'all',
+    'new',
+    'active',
+    'inactive',
+  ];
   protected readonly statusFilterIndex = computed(() =>
     this.statusOptions.indexOf(this.store.filters.status()),
   );
@@ -41,8 +45,6 @@ export class ContactsPageComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     phone: ['', Validators.required],
     category: ['Клиенты', Validators.required],
-    status: ['new' as ContactStatus, Validators.required],
-    nextContactAt: [this.today, Validators.required],
   });
 
   ngOnInit(): void {
@@ -60,8 +62,6 @@ export class ContactsPageComponent implements OnInit {
       email: '',
       phone: '',
       category: 'Клиенты',
-      status: 'new',
-      nextContactAt: this.today,
     });
   }
 
@@ -73,7 +73,9 @@ export class ContactsPageComponent implements OnInit {
 
     const payload: ContactPayload = {
       ...this.contactForm.getRawValue(),
-      lastContactAt: this.today,
+      status: 'new',
+      lastContactAt: '',
+      nextContactAt: '',
       notes: [],
       interactions: [],
       reminders: [],

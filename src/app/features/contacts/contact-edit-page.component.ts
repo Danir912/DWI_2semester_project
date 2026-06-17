@@ -1,9 +1,17 @@
-import {ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, input} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  input,
+} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {TuiButton, TuiTextfield} from '@taiga-ui/core';
 
-import {Contact, ContactPayload, ContactStatus} from '../../shared/models/contact.model';
+import {Contact, ContactPayload} from '../../shared/models/contact.model';
 import {ContactsStore} from './contacts.store';
 import {I18nPipe} from '../../shared/pipes/i18n.pipe';
 
@@ -21,7 +29,6 @@ export class ContactEditPageComponent implements OnInit {
   protected readonly store = inject(ContactsStore);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  protected readonly today = new Date().toISOString().slice(0, 10);
   protected readonly contact = computed(() => this.store.contactById(this.id()));
 
   protected readonly contactForm = this.fb.nonNullable.group({
@@ -30,8 +37,7 @@ export class ContactEditPageComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     phone: ['', Validators.required],
     category: ['Клиенты', Validators.required],
-    status: ['new' as ContactStatus, Validators.required],
-    nextContactAt: [this.today, Validators.required],
+    nextContactAt: [''],
   });
 
   constructor() {
@@ -56,6 +62,7 @@ export class ContactEditPageComponent implements OnInit {
 
     const payload: ContactPayload = {
       ...this.contactForm.getRawValue(),
+      status: contact.status,
       lastContactAt: contact.lastContactAt,
       notes: contact.notes,
       interactions: contact.interactions,
@@ -77,7 +84,6 @@ export class ContactEditPageComponent implements OnInit {
       email: contact.email,
       phone: contact.phone,
       category: contact.category,
-      status: contact.status,
       nextContactAt: contact.nextContactAt,
     });
   }
