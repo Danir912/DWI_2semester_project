@@ -15,9 +15,6 @@
           <button type="button" class="ghost ghost_square" (click)="preferences.toggleLanguage()">
             {{ 'language' | i18n }}
           </button>
-          <button type="button" class="ghost" (click)="preferences.toggleTheme()">
-            {{ (preferences.theme() === 'light' ? 'themeDark' : 'themeLight') | i18n }}
-          </button>
           <button type="button" class="ghost" (click)="auth.logout()">
             {{ 'logout' | i18n }}
           </button>
